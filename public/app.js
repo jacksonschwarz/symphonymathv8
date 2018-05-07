@@ -257,7 +257,7 @@ var TestSpace = (function (_super) {
         _this.create = function () {
             _this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
             _this.add.image(400, 400, "obstacle");
-            var bar = new manipulatives_1.Bar(_this, 10, "manipulative", { x: 400, y: 400, pullRadius: 50 });
+            var bar = new manipulatives_1.Bar(_this, 10, "manipulative", { x: 400, y: 400, pullRadius: 50, acceptedType: "BAR" });
             bar.render(300, 300);
         };
         return _this;
@@ -277,6 +277,79 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var Manipulative = (function () {
     function Manipulative(theTargetScene, aValue, aType, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
+        //the timeout function for the 
+        // timeout:any;
+        // canFollowMouse:boolean=false;
+        // private checkDragging(spriteToCheck) {
+        //     spriteToCheck.on("pointerdown", ()=>{
+        //         this.timeout=setTimeout(()=>{
+        //             this.canFollowMouse=true;
+        //         }, 3000)
+        //     })
+        //     spriteToCheck.on("pointerup", ()=>{
+        //         clearTimeout(this.timeout)
+        //     })
+        // }
+        // private followMouse(spriteToMove, sounds, originX, originY){
+        //     console.log(this.canFollowMouse)
+        //     spriteToMove.on("pointermove", function(pointer){
+        //         if(this.canFollowMouse){
+        //             spriteToMove.x=pointer.x;
+        //             spriteToMove.y=pointer.y;
+        //         }
+        //     })
+        //     spriteToMove.on("pointerdown", (pointer)=>{
+        //         if(this.canFollowMouse){
+        //             if((pointer.x >= this.dragPoint.x-this.dragPoint.pullRadius && pointer.x <= this.dragPoint.x+this.dragPoint.pullRadius) 
+        //             && (pointer.y >=this.dragPoint.y-this.dragPoint.pullRadius && pointer.y <=this.dragPoint.y+this.dragPoint.pullRadius)){
+        //                     sounds[1].play();
+        //                     spriteToMove.x=this.dragPoint.x
+        //                     spriteToMove.y=this.dragPoint.y;         
+        //             }
+        //             else{
+        //                 sounds[2].play();
+        //                 spriteToMove.x=originX;
+        //                 spriteToMove.y=originY;
+        //             } 
+        //             this.canFollowMouse=false;
+        //         }
+        //     })
+        // }
+        // private dragSprite(spriteToDrag, sounds:any[], originX, originY){
+        //         spriteToDrag.on('pointerover', function () {
+        //             this.setTint("0x555354");
+        //         });
+        //         spriteToDrag.on('pointerout', function () {
+        //             this.clearTint();
+        //         });
+        //         this.targetScene.input.setDraggable(spriteToDrag);
+        //         this.targetScene.input.on('dragstart', function (pointer, gameObject) {
+        //             gameObject.setTint(0x555354);
+        //             sounds[0].play()
+        //         });
+        //         this.targetScene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+        //             gameObject.x = dragX;
+        //             gameObject.y = dragY;
+        //             clearTimeout(this.timeout)
+        //         });
+        //         this.targetScene.input.on('dragend', (pointer, gameObject)=> {
+        //             gameObject.clearTint();
+        //             if((pointer.x >= this.dragPoint.x-this.dragPoint.pullRadius && pointer.x <= this.dragPoint.x+this.dragPoint.pullRadius) 
+        //             && (pointer.y >=this.dragPoint.y-this.dragPoint.pullRadius && pointer.y <=this.dragPoint.y+this.dragPoint.pullRadius)){
+        //                     sounds[1].play();
+        //                     gameObject.x=this.dragPoint.x;
+        //                     gameObject.y=this.dragPoint.y;
+        //             }
+        //             else{
+        //                 sounds[2].play();
+        //                 gameObject.x=originX;
+        //                 gameObject.y=originY;
+        //             }
+        //             // dropHit.play()
+        //             // console.log(pointer.x, pointer.y)
+        //         });
+        // }
+        this.canFollow = 0;
         this.targetScene = theTargetScene;
         this.value = aValue;
         this.type = aType;
@@ -287,47 +360,73 @@ var Manipulative = (function () {
         this.onPointerOut = pointeroutCallback;
         this.dragPoint = aDragPoint;
     }
-    Manipulative.prototype.render = function (x, y) {
+    Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
         var _this = this;
+        dragSprite.on("pointerdown", function () {
+            if (_this.canFollow == 0) {
+                console.log("pointer down, starting follow....");
+                _this.canFollow = 1;
+            }
+            // if(this.canFollow==1 && this.checkBounds(dragSprite.x, dragSprite.y)){
+            //     dragSprite.x=this.dragPoint.x;
+            //     dragSprite.y=this.dragPoint.y;
+            //     clearTimeout(this.timeout);
+            //     this.canFollow=0
+            // }
+            // else{
+            //     this.canFollow=false;
+            // }
+        });
+        dragSprite.on("pointerup", function () {
+            if (_this.canFollow == 1 && _this.checkBounds(dragSprite.x, dragSprite.y)) {
+                console.log("pointer up, cancelling follow");
+                dragSprite.x = _this.dragPoint.x;
+                dragSprite.y = _this.dragPoint.y;
+                _this.canFollow = 0;
+            }
+            // else if(this.canFollow==1 && !this.checkBounds(dragSprite.x, dragSprite.y)){
+            //     dragSprite.x=originX;
+            //     dragSprite.y=originY;
+            //     this.canFollow=0;
+            // }
+        });
+        // this.targetScene.input.on("pointerup", (pointer)=>{
+        //     this.timeout=setTimeout(()=>{
+        //         if(this.canFollow == 0 && this.checkBounds(pointer.x, pointer.y)){
+        //             dragSprite.x=this.dragPoint.x;
+        //             dragSprite.y=this.dragPoint.y;
+        //             this.canFollow=0;
+        //             clearTimeout(this.timeout)
+        //         }
+        //     }, 10000)
+        // })
+        this.targetScene.input.on("pointermove", function (pointer) {
+            if (_this.canFollow > 0) {
+                dragSprite.x = pointer.x;
+                dragSprite.y = pointer.y;
+            }
+        });
+    };
+    Manipulative.prototype.checkBounds = function (x, y) {
+        if ((x >= this.dragPoint.x - this.dragPoint.pullRadius && x <= this.dragPoint.x + this.dragPoint.pullRadius)
+            && (y >= this.dragPoint.y - this.dragPoint.pullRadius && y <= this.dragPoint.y + this.dragPoint.pullRadius)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    Manipulative.prototype.render = function (x, y, scale) {
         console.log("render called!");
-        var image = this.targetScene.add.sprite(200, 300, this.resourceKey).setInteractive();
+        var dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey).setInteractive();
+        if (scale) {
+            dragSprite.setScale(scale);
+        }
         var pickUp = this.targetScene.sound.add("pickUp");
         var dropHit = this.targetScene.sound.add("dropHit");
         var dropMiss = this.targetScene.sound.add("dropMiss");
-        // let emitter=new Phaser.Events.EventEmitter()
-        image.on('pointerover', function () {
-            this.setTint("0x555354");
-        });
-        image.on('pointerout', function () {
-            this.clearTint();
-        });
-        this.targetScene.input.setDraggable(image);
-        this.targetScene.input.on('dragstart', function (pointer, gameObject) {
-            gameObject.setTint(0x555354);
-            pickUp.play();
-        });
-        this.targetScene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-        });
-        this.targetScene.input.on('dragend', function (pointer, gameObject) {
-            gameObject.clearTint();
-            console.log(pointer.x, pointer.y);
-            console.log(_this.dragPoint);
-            if ((pointer.x >= _this.dragPoint.x - _this.dragPoint.pullRadius && pointer.x <= _this.dragPoint.x + _this.dragPoint.pullRadius)
-                && (pointer.y >= _this.dragPoint.y - _this.dragPoint.pullRadius && pointer.y <= _this.dragPoint.y + _this.dragPoint.pullRadius)) {
-                dropHit.play();
-                gameObject.x = _this.dragPoint.x;
-                gameObject.y = _this.dragPoint.y;
-            }
-            else {
-                dropMiss.play();
-                gameObject.x = x;
-                gameObject.y = y;
-            }
-            // dropHit.play()
-            // console.log(pointer.x, pointer.y)
-        });
+        var isDragging = false;
+        this.clickAndFollow(dragSprite, x, y);
     };
     return Manipulative;
 }());
