@@ -1,0 +1,20 @@
+﻿{"frames": [
+	{
+		"filename": "dotcard_0",
+		"frame": {"x":2,"y":501,"w":19,"h":19},
+		"rotated": false,
+		"trimmed": false,
+		"spriteSourceSize": {"x":0,"y":0,"w":100,"h":100},
+		"sourceSize": {"w":100,"h":100},
+		"pivot": {"x":0.394737,"y":0.394737}
+	}
+],
+"meta": {
+	"app": "Adobe Animate",
+	"version": "16.5.1.104",
+	"image": "dotCards.png",
+	"format": "RGB8",
+	"size": {"w":1024,"h":1024},
+	"scale": "1"
+}
+}
