@@ -1,4 +1,4 @@
-import {Manipulative} from "../utils/manipulatives";
+import {Manipulative, Bar} from "../utils/manipulatives";
 export class TestSpace extends Phaser.Scene{
     constructor(){
         super({
@@ -16,8 +16,9 @@ export class TestSpace extends Phaser.Scene{
 
     }
     create=()=>{
-        this.add.text(100, 200, "Hello, Space!");
-        let bar=new Manipulative(this, 10, "NUMBERTILE", "manipulative")
+        this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
+        this.add.image(400, 400, "obstacle");
+        let bar=new Bar(this, 10, "manipulative", {x:400, y:400, pullRadius:50})
         bar.render(300, 300)
     }
 }
