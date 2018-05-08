@@ -241,6 +241,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var bar_1 = require("../utils/manipulative/bar");
 var dotcard_1 = require("../utils/manipulative/dotcard");
 var dropzone_1 = require("../utils/dropzone");
+var background_1 = require("../utils/background");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
     function TestSpace() {
@@ -250,6 +251,7 @@ var TestSpace = (function (_super) {
         _this.preload = function () {
             _this.load.image("obstacle", "obstacle.png");
             _this.load.image("manipulative", "test_manipulative.png");
+            _this.load.image("plains", "plain 2.jpg");
             _this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json");
             _this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json");
             _this.load.audio("dropHit", "sounds/dropHit.mp3", null, null);
@@ -257,7 +259,8 @@ var TestSpace = (function (_super) {
             _this.load.audio("pickUp", "sounds/pickUp.mp3", null, null);
         };
         _this.create = function () {
-            _this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
+            var bg = new background_1.Background(_this, "plains");
+            _this.add.text(10, 200, "Try to drag and drop the white bar onto the red circle. The dot card will not drag to the red circle", { fontSize: 12 });
             _this.add.image(400, 400, "obstacle");
             var manipulative = _this.add.sprite(0, 0, 'manipulative');
             // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
@@ -274,6 +277,19 @@ var TestSpace = (function (_super) {
 }(Phaser.Scene));
 exports.TestSpace = TestSpace;
 //# sourceMappingURL=testSpace.js.map
+});
+
+;require.register("utils/background.ts", function(exports, require, module) {
+"use strict";
+var Background = (function () {
+    function Background(aTargetScene, aBackgroundImageKey) {
+        this.targetScene = aTargetScene;
+        this.targetScene.add.image(0, 0, aBackgroundImageKey).setOrigin(0, 0);
+    }
+    return Background;
+}());
+exports.Background = Background;
+//# sourceMappingURL=background.js.map
 });
 
 ;require.register("utils/dropzone.ts", function(exports, require, module) {
@@ -343,7 +359,6 @@ var DotCard = (function (_super) {
         var _this = this;
         var frame = aValue.toString();
         var dotCard = theTargetScene.add.sprite(0, 0, "dotcards", frame);
-        dotCard.visible = false;
         console.log(dotCard);
         _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, aDragPoint) || this;
         return _this;
@@ -379,6 +394,7 @@ var Manipulative = (function () {
         this.onPointerOut = pointeroutCallback;
         this.dragPoint = aDragPoint;
         this.dragSprite = aSprite;
+        this.dragSprite.visible = false;
         this.soundManager = new soundmanager_1.SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"]);
     }
     Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
@@ -443,6 +459,15 @@ var Manipulative = (function () {
         }
         this.isDragging = false;
     };
+    Manipulative.prototype.activateOnMouseOver = function () {
+        var _this = this;
+        this.dragSprite.on("pointerover", function () {
+            _this.dragSprite.setAlpha(0.75);
+        });
+        this.dragSprite.on("pointerout", function () {
+            _this.dragSprite.setAlpha(1);
+        });
+    };
     Manipulative.prototype.render = function (x, y, scale) {
         this.dragSprite.visible = true;
         console.log("render called!");
@@ -457,6 +482,7 @@ var Manipulative = (function () {
         // this.dropMiss=this.targetScene.sound.add("dropMiss");
         var isDragging = false;
         this.clickAndFollow(this.dragSprite, x, y);
+        this.activateOnMouseOver();
     };
     return Manipulative;
 }());

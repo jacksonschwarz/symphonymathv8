@@ -39,6 +39,7 @@ export class Manipulative{
         this.dragPoint=aDragPoint;
         this.dragSprite=aSprite;
 
+        this.dragSprite.visible=false;
 
         this.soundManager=new SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"])
 
@@ -113,6 +114,14 @@ export class Manipulative{
 
         this.isDragging=false;
     }
+    private activateOnMouseOver(){
+        this.dragSprite.on("pointerover", ()=>{
+            this.dragSprite.setAlpha(0.75)
+        })
+        this.dragSprite.on("pointerout", ()=>{
+            this.dragSprite.setAlpha(1);
+        })
+    }
     render(x, y, scale?){
         this.dragSprite.visible=true;
         console.log("render called!")
@@ -127,6 +136,7 @@ export class Manipulative{
         // this.dropMiss=this.targetScene.sound.add("dropMiss");
         let isDragging=false;
         this.clickAndFollow(this.dragSprite,x,y);
+        this.activateOnMouseOver();
     }
 
 }
