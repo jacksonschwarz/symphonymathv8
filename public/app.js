@@ -239,6 +239,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var bar_1 = require("../utils/manipulative/bar");
+var dotcard_1 = require("../utils/manipulative/dotcard");
 var dropzone_1 = require("../utils/dropzone");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
@@ -249,7 +250,7 @@ var TestSpace = (function (_super) {
         _this.preload = function () {
             _this.load.image("obstacle", "obstacle.png");
             _this.load.image("manipulative", "test_manipulative.png");
-            _this.load.atlas("dotcards", "atlas/dotcards.png", "atlas/dotcards.json");
+            _this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json");
             _this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json");
             _this.load.audio("dropHit", "sounds/dropHit.mp3", null, null);
             _this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null);
@@ -258,9 +259,14 @@ var TestSpace = (function (_super) {
         _this.create = function () {
             _this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
             _this.add.image(400, 400, "obstacle");
+            var manipulative = _this.add.sprite(0, 0, 'manipulative');
+            // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
             var dropZone = new dropzone_1.DropZone(400, 400, 50, "BAR");
-            var bar = new bar_1.Bar(_this, 10, "manipulative", dropZone);
+            var bar = new bar_1.Bar(_this, 10, manipulative, dropZone);
             bar.render(300, 300);
+            var dotCard = new dotcard_1.DotCard(_this, 3, dropZone);
+            dotCard.dragSprite.setScale(0.5);
+            dotCard.render(500, 500);
         };
         return _this;
     }
@@ -333,10 +339,16 @@ var __extends = (this && this.__extends) || function (d, b) {
 var manipulatives_1 = require("./manipulatives");
 var DotCard = (function (_super) {
     __extends(DotCard, _super);
-    function DotCard(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
-        return _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, aResource, aDragPoint) || this;
+    function DotCard(theTargetScene, aValue, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        var _this = this;
+        var frame = aValue.toString();
+        var dotCard = theTargetScene.add.sprite(0, 0, "dotcards", frame);
+        dotCard.visible = false;
+        console.log(dotCard);
+        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, aDragPoint) || this;
+        return _this;
     }
-    //bar specific rendering method
+    //dotcard specific rendering method
     DotCard.prototype.render = function (x, y) {
         _super.prototype.render.call(this, x, y);
     };
@@ -350,19 +362,23 @@ exports.DotCard = DotCard;
 "use strict";
 var soundmanager_1 = require("../soundmanager");
 var Manipulative = (function () {
-    function Manipulative(theTargetScene, aValue, aType, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
+    function Manipulative(theTargetScene, aValue, aType, 
+        // aResource:string,
+        aSprite, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
         this.isDragging = false;
         this.startDragMS = 0;
         this.minDragDelay = 400;
         this.targetScene = theTargetScene;
         this.value = aValue;
         this.type = aType;
-        this.resourceKey = aResource;
+        // this.resourceKey=aResource;
+        this.dragSprite = aSprite;
         this.onClick = clickCallback;
         this.onPointerDown = pointerdownCallback;
         this.onPointerOver = pointeroverCallback;
         this.onPointerOut = pointeroutCallback;
         this.dragPoint = aDragPoint;
+        this.dragSprite = aSprite;
         this.soundManager = new soundmanager_1.SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"]);
     }
     Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
@@ -392,15 +408,15 @@ var Manipulative = (function () {
             }
         });
     };
-    Manipulative.prototype.checkBounds = function (x, y) {
-        if ((x >= this.dragPoint.x - this.dragPoint.pullRadius && x <= this.dragPoint.x + this.dragPoint.pullRadius)
-            && (y >= this.dragPoint.y - this.dragPoint.pullRadius && y <= this.dragPoint.y + this.dragPoint.pullRadius)) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    };
+    // private checkBounds(x, y){
+    //     if((x >= this.dragPoint.x-this.dragPoint.pullRadius && x <= this.dragPoint.x+this.dragPoint.pullRadius) 
+    //     && (y >=this.dragPoint.y-this.dragPoint.pullRadius && y <=this.dragPoint.y+this.dragPoint.pullRadius)){
+    //         return true;
+    //     }
+    //     else{
+    //         return false;
+    //     }
+    // }
     Manipulative.prototype.startDrag = function () {
         console.log("pointer down, starting follow....");
         // this.pickUp.play();
@@ -428,8 +444,11 @@ var Manipulative = (function () {
         this.isDragging = false;
     };
     Manipulative.prototype.render = function (x, y, scale) {
+        this.dragSprite.visible = true;
         console.log("render called!");
-        this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
+        // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
+        this.dragSprite.x = x;
+        this.dragSprite.y = y;
         this.dragSprite.setInteractive();
         this.origScale = this.dragSprite.scale;
         console.log(this.origScale);

@@ -12,7 +12,7 @@ export class TestSpace extends Phaser.Scene{
     preload=()=>{
         this.load.image("obstacle", "obstacle.png")
         this.load.image("manipulative", "test_manipulative.png");
-        this.load.atlas("dotcards", "atlas/dotcards.png", "atlas/dotcards.json")
+        this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json")
         this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json")
         this.load.audio("dropHit", "sounds/dropHit.mp3", null, null)
         this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null)
@@ -22,8 +22,15 @@ export class TestSpace extends Phaser.Scene{
     create=()=>{
         this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
         this.add.image(400, 400, "obstacle");
+        let manipulative=this.add.sprite(0, 0, 'manipulative')
+        // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
+
         let dropZone=new DropZone(400, 400, 50, "BAR")
-        let bar=new Bar(this, 10, "manipulative", dropZone);
+        let bar=new Bar(this, 10, manipulative, dropZone);
         bar.render(300, 300);
+
+        let dotCard=new DotCard(this, 3, dropZone);
+        dotCard.dragSprite.setScale(0.5)
+        dotCard.render(500, 500);
     }
 }

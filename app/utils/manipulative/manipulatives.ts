@@ -19,7 +19,8 @@ export class Manipulative{
         theTargetScene:any,
         aValue:number,
         aType:ManipulativeType | string,
-        aResource:string,
+        // aResource:string,
+        aSprite:any,
         aDragPoint:DropZone,
         clickCallback?:()=>void,
         pointerdownCallback?:()=>void,
@@ -29,12 +30,14 @@ export class Manipulative{
         this.targetScene=theTargetScene;
         this.value=aValue;
         this.type=aType;
-        this.resourceKey=aResource;
+        // this.resourceKey=aResource;
+        this.dragSprite=aSprite;
         this.onClick=clickCallback;
         this.onPointerDown=pointerdownCallback;
         this.onPointerOver=pointeroverCallback;
         this.onPointerOut=pointeroutCallback;
         this.dragPoint=aDragPoint;
+        this.dragSprite=aSprite;
 
 
         this.soundManager=new SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"])
@@ -74,15 +77,15 @@ export class Manipulative{
             }
         })
     }
-    private checkBounds(x, y){
-        if((x >= this.dragPoint.x-this.dragPoint.pullRadius && x <= this.dragPoint.x+this.dragPoint.pullRadius) 
-        && (y >=this.dragPoint.y-this.dragPoint.pullRadius && y <=this.dragPoint.y+this.dragPoint.pullRadius)){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
+    // private checkBounds(x, y){
+    //     if((x >= this.dragPoint.x-this.dragPoint.pullRadius && x <= this.dragPoint.x+this.dragPoint.pullRadius) 
+    //     && (y >=this.dragPoint.y-this.dragPoint.pullRadius && y <=this.dragPoint.y+this.dragPoint.pullRadius)){
+    //         return true;
+    //     }
+    //     else{
+    //         return false;
+    //     }
+    // }
     private startDrag() {
         console.log("pointer down, starting follow....");
         // this.pickUp.play();
@@ -105,14 +108,17 @@ export class Manipulative{
         else{
             this.soundManager.play("dropMiss");
             this.dragSprite.x=originX;
-            this.dragSprite.y=originY;
+            this.dragSprite.y=originY
         }
 
         this.isDragging=false;
     }
     render(x, y, scale?){
+        this.dragSprite.visible=true;
         console.log("render called!")
-        this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
+        // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
+        this.dragSprite.x=x;
+        this.dragSprite.y=y;
         this.dragSprite.setInteractive();
         this.origScale = this.dragSprite.scale;
         console.log(this.origScale);

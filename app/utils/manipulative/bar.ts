@@ -1,16 +1,12 @@
 import {Manipulative, ManipulativeType} from './manipulatives';
+import {DropZone} from '../dropzone'
 export class Bar extends Manipulative {
     
         constructor(        
             theTargetScene:any,
             aValue:number,
-            aResource:string,
-            aDragPoint:{
-                x:number,
-                y:number,
-                pullRadius:number,
-                acceptedType:string | ManipulativeType
-            },
+            aResource:any,
+            aDragPoint:DropZone,
             clickCallback?:()=>void,
             pointerdownCallback?:()=>void,
             pointeroverCallback?:()=>void,

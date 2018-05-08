@@ -1,25 +1,24 @@
 import {Manipulative, ManipulativeType} from './manipulatives';
+import {DropZone} from "../dropzone";
 export class DotCard extends Manipulative {
     
         constructor(        
             theTargetScene:any,
             aValue:number,
-            aResource:string,
-            aDragPoint:{
-                x:number,
-                y:number,
-                pullRadius:number,
-                acceptedType:string | ManipulativeType
-            },
+            aDragPoint:DropZone,
             clickCallback?:()=>void,
             pointerdownCallback?:()=>void,
             pointeroverCallback?:()=>void,
             pointerupCallback?:()=>void,){
-            super(theTargetScene, aValue, ManipulativeType.DOTCARD, aResource, aDragPoint);
+            let frame=aValue.toString();
+            let dotCard=theTargetScene.add.sprite(0, 0, "dotcards", frame)
+            dotCard.visible=false;
+            console.log(dotCard)
+            super(theTargetScene, aValue, ManipulativeType.DOTCARD, dotCard, aDragPoint);
     
             
         }
-        //bar specific rendering method
+        //dotcard specific rendering method
         render(x, y){
             super.render(x, y);
         }
