@@ -150,14 +150,20 @@ var __makeRelativeRequire = function(require, mappings, pref) {
 require.register("initialize.ts", function(exports, require, module) {
 "use strict";
 var default_1 = require("./scenes/default");
+var scalemanager_1 = require("./utils/scalemanager");
 var game = new Phaser.Game({
     // See <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
     width: 800,
     height: 600,
     // zoom: 1,
     // resolution: 1,
+    callbacks: {
+        postBoot: function () {
+            new scalemanager_1.ScaleManager(game, (!game.device.os.windows && !game.device.os.linux && !game.device.os.macOS));
+        }
+    },
     type: Phaser.AUTO,
-    // parent: null,
+    parent: "content",
     // canvas: null,
     // canvasStyle: null,
     // seed: null,
@@ -238,7 +244,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var bar_1 = require("../utils/manipulative/bar");
 var dotcard_1 = require("../utils/manipulative/dotcard");
 var dropzone_1 = require("../utils/dropzone");
 var background_1 = require("../utils/background");
@@ -251,6 +256,7 @@ var TestSpace = (function (_super) {
         _this.preload = function () {
             _this.load.image("obstacle", "obstacle.png");
             _this.load.image("manipulative", "test_manipulative.png");
+            _this.load.image("dropzone", "dropzone.png");
             _this.load.image("plains", "plain 2.jpg");
             _this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json");
             _this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json");
@@ -260,13 +266,14 @@ var TestSpace = (function (_super) {
         };
         _this.create = function () {
             var bg = new background_1.Background(_this, "plains");
-            _this.add.text(10, 200, "Try to drag and drop the white bar onto the red circle. The dot card will not drag to the red circle", { fontSize: 12 });
-            _this.add.image(400, 400, "obstacle");
-            var manipulative = _this.add.sprite(0, 0, 'manipulative');
+            var dropZone = new dropzone_1.DropZone(_this, 500, 200, 50, "DOTCARD");
+            dropZone.render();
+            // this.add.image(400, 400, "obstacle");
+            // let manipulative=this.add.sprite(0, 0, 'manipulative')
             // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
-            var dropZone = new dropzone_1.DropZone(400, 400, 50, "BAR");
-            var bar = new bar_1.Bar(_this, 10, manipulative, dropZone);
-            bar.render(300, 300);
+            // let dropZone=new DropZone(this, 400, 400, 50, "BAR")
+            // let bar=new Bar(this, 10, manipulative, dropZone);
+            // bar.render(300, 300);
             var dotCard = new dotcard_1.DotCard(_this, 3, dropZone);
             dotCard.dragSprite.setScale(0.5);
             dotCard.render(500, 500);
@@ -298,13 +305,24 @@ exports.Background = Background;
  * For dragging manipulatives to the drop area
  */
 var DropZone = (function () {
-    function DropZone(destX, destY, aPullRadius, anAcceptedType) {
+    function DropZone(aTargetScene, destX, destY, aPullRadius, anAcceptedType) {
+        this.targetScene = aTargetScene;
         this.x = destX;
         this.y = destY;
         this.pullRadius = aPullRadius;
         this.acceptedType = anAcceptedType;
     }
     DropZone.prototype.render = function () {
+        var dropZone = this.targetScene.add.sprite(this.x, this.y, "dropzone");
+        dropZone.setAlpha(0.8);
+        this.targetScene.tweens.add({
+            targets: [dropZone],
+            alpha: 0.3,
+            duration: 2000,
+            ease: "Sine.easeInOut",
+            yoyo: true,
+            repeat: -1
+        });
     };
     DropZone.prototype.checkBounds = function (x, y, manipulative) {
         if (((x >= this.x - this.pullRadius && x <= this.x + this.pullRadius)
@@ -320,29 +338,6 @@ var DropZone = (function () {
 }());
 exports.DropZone = DropZone;
 //# sourceMappingURL=dropzone.js.map
-});
-
-;require.register("utils/manipulative/bar.ts", function(exports, require, module) {
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var manipulatives_1 = require("./manipulatives");
-var Bar = (function (_super) {
-    __extends(Bar, _super);
-    function Bar(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
-        return _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.BAR, aResource, aDragPoint) || this;
-    }
-    //bar specific rendering method
-    Bar.prototype.render = function (x, y) {
-        _super.prototype.render.call(this, x, y);
-    };
-    return Bar;
-}(manipulatives_1.Manipulative));
-exports.Bar = Bar;
-//# sourceMappingURL=bar.js.map
 });
 
 ;require.register("utils/manipulative/dotcard.ts", function(exports, require, module) {
@@ -493,6 +488,66 @@ var ManipulativeType;
     ManipulativeType[ManipulativeType["DOTCARD"] = "DOTCARD"] = "DOTCARD";
 })(ManipulativeType = exports.ManipulativeType || (exports.ManipulativeType = {}));
 //# sourceMappingURL=manipulatives.js.map
+});
+
+;require.register("utils/scalemanager.ts", function(exports, require, module) {
+"use strict";
+var ScaleManager = (function () {
+    function ScaleManager(game, isMobile) {
+        var _this = this;
+        // console.log(game)
+        // console.log(game.canvas);
+        this.canvas = game.canvas;
+        this.mobile = isMobile;
+        this.game = game;
+        window.addEventListener('resize', function () {
+            _this.rescale();
+            // this.canvas.height=window.outerHeight;
+            // this.canvas.width=window.outerWidth;
+            if (_this.mobile) {
+                if (window.innerWidth < window.innerHeight) {
+                    _this.leaveIncorrectOrientation();
+                }
+                else {
+                    _this.enterIncorrectOrientation();
+                }
+            }
+        });
+        this.rescale();
+    }
+    ScaleManager.prototype.resize = function (width, height) {
+        this.game.resize(width, height);
+        this.game.scene.scenes.forEach(function (scene) {
+            scene.cameras.main.setViewport(0, 0, width, height);
+            scene.cameras.main.setZoom(this.scale);
+        });
+        this.rescale();
+    };
+    ScaleManager.prototype.rescale = function () {
+        // var orientation = (this.mobile) ? 'left top' : 'center top';
+        var orientation = "50% 50%";
+        var scale = Math.min(window.innerWidth / this.canvas.width, window.innerHeight / this.canvas.height);
+        var usedHeight = this.canvas.height * scale;
+        document.body.height = window.innerHeight;
+        this.canvas.setAttribute('style', '-ms-transform-origin: ' + orientation + '; -webkit-transform-origin: ' + orientation + ';' +
+            ' -moz-transform-origin: ' + orientation + '; -o-transform-origin: ' + orientation + '; transform-origin: ' + orientation + ';' +
+            ' -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1);' +
+            ' -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); ' +
+            ' transform: scale(' + scale + ');' +
+            ' display: block; margin: 0; padding: 0; vertical-align: baseline;');
+    };
+    ScaleManager.prototype.enterIncorrectOrientation = function () {
+        document.getElementById("orientation").style.display = "block";
+        document.getElementById("content").style.display = "none";
+    };
+    ScaleManager.prototype.leaveIncorrectOrientation = function () {
+        document.getElementById("orientation").style.display = "none";
+        document.getElementById("content").style.display = "block";
+    };
+    return ScaleManager;
+}());
+exports.ScaleManager = ScaleManager;
+//# sourceMappingURL=scalemanager.js.map
 });
 
 ;require.register("utils/soundmanager.ts", function(exports, require, module) {

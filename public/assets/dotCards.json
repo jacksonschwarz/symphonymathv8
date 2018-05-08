@@ -1,0 +1,99 @@
+{"frames": {
+
+"0":
+{
+	"frame": {"x":20,"y":20,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"1":
+{
+	"frame": {"x":20,"y":320,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"10":
+{
+	"frame": {"x":476,"y":620,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"2":
+{
+	"frame": {"x":248,"y":20,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"3":
+{
+	"frame": {"x":248,"y":320,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"4":
+{
+	"frame": {"x":20,"y":620,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"5":
+{
+	"frame": {"x":476,"y":320,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"6":
+{
+	"frame": {"x":248,"y":620,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"7":
+{
+	"frame": {"x":704,"y":20,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"8":
+{
+	"frame": {"x":476,"y":20,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+},
+"9":
+{
+	"frame": {"x":704,"y":320,"w":206,"h":278},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":206,"h":278},
+	"sourceSize": {"w":206,"h":278}
+}},
+"meta": {
+	"app": "Adobe Animate",
+	"version": "16.5.1.104",
+	"image": "dotCards.png",
+	"format": "RGB8",
+	"size": {"w":1024,"h":1024},
+	"scale": "1"
+}
+}

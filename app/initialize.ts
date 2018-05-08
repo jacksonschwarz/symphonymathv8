@@ -1,13 +1,20 @@
 import {Main} from './scenes/default';
 
+import {ScaleManager} from "./utils/scalemanager"
+
 const game = new Phaser.Game(<any>{ // <any> works around the missing GameConfig.physics definition
   // See <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
   width: 800,
   height: 600,
   // zoom: 1,
   // resolution: 1,
+  callbacks:{
+    postBoot(){
+      new ScaleManager(game, (!game.device.os.windows && !game.device.os.linux && !game.device.os.macOS))
+    }
+  },
   type: Phaser.AUTO,
-  // parent: null,
+  parent: "content",
   // canvas: null,
   // canvasStyle: null,
   // seed: null,
