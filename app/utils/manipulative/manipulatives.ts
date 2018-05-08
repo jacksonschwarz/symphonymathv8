@@ -45,7 +45,7 @@ export class Manipulative{
 
         //dotcards too big hotfix
         if(this.type == ManipulativeType.DOTCARD){
-            this.originalScale=0.5
+            this.originalScale=0.5;
         }
         else{
             this.originalScale=this.dragSprite.scaleX;            
@@ -60,7 +60,7 @@ export class Manipulative{
  
     isDragging:boolean=false;
     startDragMS:number=0;
-    minDragDelay:number=400;
+    minDragDelay:number=200;
     origScale:number;
     dragSprite;
 
@@ -93,13 +93,13 @@ export class Manipulative{
     }
     private startDrag() {
         if(!this.isDragging){
-        // this.pickUp.play();
-        this.soundManager.play("pickUp");
-        //this.dragSprite.setScale(this.origScale *1.3);
-        this.isDragging=true;
-        this.startDragMS = Date.now(); 
-        }
-               
+            this.soundManager.play("pickUp");
+            this.dragSprite.setScale(this.originalScale*1.25);
+            this.dragSprite.setDepth(100);
+            this.isDragging=true;
+            this.targetScene.input.mouse.requestPointerLock();
+            this.startDragMS = Date.now(); 
+        }               
     }
     private stopDrag(originX, originY) {
         let isInBounds=false;
@@ -132,19 +132,22 @@ export class Manipulative{
         if(!isInBounds){
             this.soundManager.play("dropMiss");
             this.dragSprite.x=originX;
-            this.dragSprite.y=originY
+            this.dragSprite.y=originY;
         }
 
-
+        this.dragSprite.setScale(this.originalScale);
+        this.dragSprite.setDepth(0);
+        this.targetScene.input.mouse.releasePointerLock();
+        console.log('drop')
         this.isDragging=false;
     }
     private activateOnMouseOver(){
-        this.dragSprite.on("pointerover", ()=>{
-            this.dragSprite.setScale(this.originalScale*1.25)
-        })
-        this.dragSprite.on("pointerout", ()=>{
-            this.dragSprite.setScale(this.originalScale);
-        })
+        // this.dragSprite.on("pointerover", ()=>{
+        //     this.dragSprite.setScale(this.originalScale*1.25)
+        // })
+        // this.dragSprite.on("pointerout", ()=>{
+        //     this.dragSprite.setScale(this.originalScale);
+        // })
     }
     render(x, y, scale?){
         this.originalX=x;

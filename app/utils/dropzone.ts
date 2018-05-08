@@ -27,11 +27,11 @@ export class DropZone{
     dropZone;
     render(){
         this.dropZone=this.targetScene.add.sprite(this.x, this.y, "dropzone");
-        this.dropZone.setAlpha(0.8);
+        this.dropZone.setAlpha(0.6);
         this.targetScene.tweens.add({
             targets:[this.dropZone],
-            alpha:0.3,
-            duration:2000,
+            alpha:0.4,
+            duration:500,
             ease:"Sine.easeInOut",
             yoyo:true,
             repeat:-1

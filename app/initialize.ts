@@ -4,8 +4,8 @@ import {ScaleManager} from "./utils/scalemanager"
 
 const game = new Phaser.Game(<any>{ // <any> works around the missing GameConfig.physics definition
   // See <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
-  width: 800,
-  height: 600,
+  width: 1024,
+  height: 768,
   // zoom: 1,
   // resolution: 1,
   callbacks:{

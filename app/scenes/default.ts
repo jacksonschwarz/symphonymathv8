@@ -9,6 +9,6 @@ export class Main extends Phaser.Scene{
     this.scene.add("TestSpace", TestSpace, true);
   }
   create(){
-    this.add.text(100, 100, "Hello, world!")
+    //this.add.text(100, 100, "Hello, world!")
   }
 }
