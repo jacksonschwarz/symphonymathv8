@@ -18,7 +18,7 @@ export class TestSpace extends Phaser.Scene{
     create=()=>{
         this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
         this.add.image(400, 400, "obstacle");
-        let bar=new Bar(this, 10, "manipulative", {x:400, y:400, pullRadius:50, acceptedType:"BAR"})
-        bar.render(300, 300)
+        let bar=new Bar(this, 10, "manipulative", {x:400, y:400, pullRadius:50, acceptedType:"BAR"});
+        bar.render(300, 300);
     }
 }
