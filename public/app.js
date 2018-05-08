@@ -239,6 +239,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var bar_1 = require("../utils/manipulative/bar");
+var dropzone_1 = require("../utils/dropzone");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
     function TestSpace() {
@@ -257,7 +258,8 @@ var TestSpace = (function (_super) {
         _this.create = function () {
             _this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
             _this.add.image(400, 400, "obstacle");
-            var bar = new bar_1.Bar(_this, 10, "manipulative", { x: 400, y: 400, pullRadius: 50, acceptedType: "BAR" });
+            var dropZone = new dropzone_1.DropZone(400, 400, 50, "BAR");
+            var bar = new bar_1.Bar(_this, 10, "manipulative", dropZone);
             bar.render(300, 300);
         };
         return _this;
@@ -266,6 +268,36 @@ var TestSpace = (function (_super) {
 }(Phaser.Scene));
 exports.TestSpace = TestSpace;
 //# sourceMappingURL=testSpace.js.map
+});
+
+;require.register("utils/dropzone.ts", function(exports, require, module) {
+"use strict";
+/**
+ * For dragging manipulatives to the drop area
+ */
+var DropZone = (function () {
+    function DropZone(destX, destY, aPullRadius, anAcceptedType) {
+        this.x = destX;
+        this.y = destY;
+        this.pullRadius = aPullRadius;
+        this.acceptedType = anAcceptedType;
+    }
+    DropZone.prototype.render = function () {
+    };
+    DropZone.prototype.checkBounds = function (x, y, manipulative) {
+        if (((x >= this.x - this.pullRadius && x <= this.x + this.pullRadius)
+            && (y >= this.y - this.pullRadius && y <= this.y + this.pullRadius))
+            && manipulative.type == this.acceptedType) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    return DropZone;
+}());
+exports.DropZone = DropZone;
+//# sourceMappingURL=dropzone.js.map
 });
 
 ;require.register("utils/manipulative/bar.ts", function(exports, require, module) {
@@ -341,7 +373,7 @@ var Manipulative = (function () {
                 _this.startDrag();
             }
             else {
-                _this.stopDrag();
+                _this.stopDrag(originX, originY);
             }
         });
         dragSprite.on("pointerup", function () {
@@ -349,7 +381,7 @@ var Manipulative = (function () {
                 var timeLapse = Date.now() - _this.startDragMS;
                 //var inOrigArea:boolean = this.checkBounds(dragSprite.x, dragSprite.y);    
                 if (timeLapse > _this.minDragDelay) {
-                    _this.stopDrag();
+                    _this.stopDrag(originX, originY);
                 }
             }
         });
@@ -377,13 +409,22 @@ var Manipulative = (function () {
         this.isDragging = true;
         this.startDragMS = Date.now();
     };
-    Manipulative.prototype.stopDrag = function () {
+    Manipulative.prototype.stopDrag = function (originX, originY) {
         console.log("pointer up, cancelling follow");
         //dragSprite.x=this.dragPoint.x;
         //dragSprite.y=this.dragPoint.y;
         //this.dragSprite.setScale(this.origScale);
         // this.dropHit.play();
-        this.soundManager.play("dropHit");
+        if (this.dragPoint.checkBounds(this.dragSprite.x, this.dragSprite.y, this)) {
+            this.soundManager.play("dropHit");
+            this.dragSprite.x = this.dragPoint.x;
+            this.dragSprite.y = this.dragPoint.y;
+        }
+        else {
+            this.soundManager.play("dropMiss");
+            this.dragSprite.x = originX;
+            this.dragSprite.y = originY;
+        }
         this.isDragging = false;
     };
     Manipulative.prototype.render = function (x, y, scale) {
@@ -393,8 +434,8 @@ var Manipulative = (function () {
         this.origScale = this.dragSprite.scale;
         console.log(this.origScale);
         // this.pickUp=this.targetScene.sound.add("pickUp");
-        this.dropHit = this.targetScene.sound.add("dropHit");
-        this.dropMiss = this.targetScene.sound.add("dropMiss");
+        // this.dropHit=this.targetScene.sound.add("dropHit");
+        // this.dropMiss=this.targetScene.sound.add("dropMiss");
         var isDragging = false;
         this.clickAndFollow(this.dragSprite, x, y);
     };

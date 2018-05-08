@@ -1,4 +1,5 @@
 import {SoundManager} from "../soundmanager";
+import {DropZone} from "../dropzone";
 
 export class Manipulative{
     targetScene:any;
@@ -12,24 +13,14 @@ export class Manipulative{
 
     soundManager;
 
-    dragPoint:{
-        x:number,
-        y:number,
-        pullRadius:number
-        acceptedType:string | ManipulativeType
-    }
+    dragPoint:DropZone;
 
     constructor(
         theTargetScene:any,
         aValue:number,
         aType:ManipulativeType | string,
         aResource:string,
-        aDragPoint:{
-            x:number,
-            y:number,
-            pullRadius:number,
-            acceptedType:string | ManipulativeType
-        },
+        aDragPoint:DropZone,
         clickCallback?:()=>void,
         pointerdownCallback?:()=>void,
         pointeroverCallback?:()=>void,
@@ -55,9 +46,6 @@ export class Manipulative{
     minDragDelay:number=400;
     origScale:number;
     dragSprite;
-    pickUp;
-    dropHit;
-    dropMiss;
 
     private clickAndFollow(dragSprite, originX, originY){
         this.dragSprite = dragSprite;
@@ -65,7 +53,7 @@ export class Manipulative{
             if(!this.isDragging){
                 this.startDrag();
              } else {
-                this.stopDrag();
+                this.stopDrag(originX, originY);
             }
         })
         dragSprite.on("pointerup", ()=>{
@@ -73,7 +61,7 @@ export class Manipulative{
                 var timeLapse:number = Date.now() - this.startDragMS;
                 //var inOrigArea:boolean = this.checkBounds(dragSprite.x, dragSprite.y);    
                 if(timeLapse>this.minDragDelay){
-                    this.stopDrag();
+                    this.stopDrag(originX, originY);
                 }   
             }
           
@@ -103,13 +91,23 @@ export class Manipulative{
         this.isDragging=true;
         this.startDragMS = Date.now();                
     }
-    private stopDrag() {
+    private stopDrag(originX, originY) {
         console.log("pointer up, cancelling follow");
         //dragSprite.x=this.dragPoint.x;
         //dragSprite.y=this.dragPoint.y;
         //this.dragSprite.setScale(this.origScale);
         // this.dropHit.play();
-        this.soundManager.play("dropHit");
+        if(this.dragPoint.checkBounds(this.dragSprite.x, this.dragSprite.y, this)){
+            this.soundManager.play("dropHit");
+            this.dragSprite.x=this.dragPoint.x;
+            this.dragSprite.y=this.dragPoint.y;
+        }
+        else{
+            this.soundManager.play("dropMiss");
+            this.dragSprite.x=originX;
+            this.dragSprite.y=originY;
+        }
+
         this.isDragging=false;
     }
     render(x, y, scale?){
@@ -119,8 +117,8 @@ export class Manipulative{
         this.origScale = this.dragSprite.scale;
         console.log(this.origScale);
         // this.pickUp=this.targetScene.sound.add("pickUp");
-        this.dropHit=this.targetScene.sound.add("dropHit");
-        this.dropMiss=this.targetScene.sound.add("dropMiss");
+        // this.dropHit=this.targetScene.sound.add("dropHit");
+        // this.dropMiss=this.targetScene.sound.add("dropMiss");
         let isDragging=false;
         this.clickAndFollow(this.dragSprite,x,y);
     }

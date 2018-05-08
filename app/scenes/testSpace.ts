@@ -2,6 +2,7 @@ import {Manipulative} from "../utils/manipulative/manipulatives";
 import {Bar} from "../utils/manipulative/bar";
 import {DotCard} from "../utils/manipulative/dotcard";
 
+import {DropZone} from "../utils/dropzone";
 export class TestSpace extends Phaser.Scene{
     constructor(){
         super({
@@ -21,7 +22,8 @@ export class TestSpace extends Phaser.Scene{
     create=()=>{
         this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
         this.add.image(400, 400, "obstacle");
-        let bar=new Bar(this, 10, "manipulative", {x:400, y:400, pullRadius:50, acceptedType:"BAR"});
+        let dropZone=new DropZone(400, 400, 50, "BAR")
+        let bar=new Bar(this, 10, "manipulative", dropZone);
         bar.render(300, 300);
     }
 }
