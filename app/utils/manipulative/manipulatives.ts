@@ -13,7 +13,7 @@ export class Manipulative{
 
     soundManager;
 
-    dragPoint:DropZone;
+    dragPoints:DropZone[];
 
     constructor(
         theTargetScene:any,
@@ -21,7 +21,7 @@ export class Manipulative{
         aType:ManipulativeType | string,
         // aResource:string,
         aSprite:any,
-        aDragPoint:DropZone,
+        someDragPoints:DropZone[],
         clickCallback?:()=>void,
         pointerdownCallback?:()=>void,
         pointeroverCallback?:()=>void,
@@ -36,11 +36,11 @@ export class Manipulative{
         this.onPointerDown=pointerdownCallback;
         this.onPointerOver=pointeroverCallback;
         this.onPointerOut=pointeroutCallback;
-        this.dragPoint=aDragPoint;
+        this.dragPoints=someDragPoints;
         this.dragSprite=aSprite;
 
         this.dragSprite.visible=false;
-
+    
         this.soundManager=new SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"])
 
     }
@@ -78,15 +78,6 @@ export class Manipulative{
             }
         })
     }
-    // private checkBounds(x, y){
-    //     if((x >= this.dragPoint.x-this.dragPoint.pullRadius && x <= this.dragPoint.x+this.dragPoint.pullRadius) 
-    //     && (y >=this.dragPoint.y-this.dragPoint.pullRadius && y <=this.dragPoint.y+this.dragPoint.pullRadius)){
-    //         return true;
-    //     }
-    //     else{
-    //         return false;
-    //     }
-    // }
     private startDrag() {
         // this.pickUp.play();
         this.soundManager.play("pickUp");
@@ -95,22 +86,24 @@ export class Manipulative{
         this.startDragMS = Date.now();                
     }
     private stopDrag(originX, originY) {
-        //dragSprite.x=this.dragPoint.x;
-        //dragSprite.y=this.dragPoint.y;
-        //this.dragSprite.setScale(this.origScale);
-        // this.dropHit.play();
-        if(this.dragPoint.checkBounds(this.dragSprite.x, this.dragSprite.y, this)){
-            this.soundManager.play("dropHit");
-            this.dragSprite.x=this.dragPoint.x;
-            this.dragSprite.y=this.dragPoint.y;
-            this.dragPoint.manipulativeInZone=this
-            console.log(this.dragPoint.manipulativeInZone.value);
+        let isInBounds=false;
+        for(let i=0;i<this.dragPoints.length;i++){
+            if(this.dragPoints[i].checkBounds(this.dragSprite.x, this.dragSprite.y, this)){
+                this.soundManager.play("dropHit");
+                this.dragSprite.x=this.dragPoints[i].x;
+                this.dragSprite.y=this.dragPoints[i].y;
+
+                console.log("TRUE!")
+                isInBounds=true;;
+            }
         }
-        else{
+        if(!isInBounds){
             this.soundManager.play("dropMiss");
             this.dragSprite.x=originX;
             this.dragSprite.y=originY
         }
+
+        console.log("FALSE!")
 
         this.isDragging=false;
     }

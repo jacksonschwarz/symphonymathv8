@@ -270,7 +270,9 @@ var TestSpace = (function (_super) {
             var bg = new background_1.Background(_this, "plains");
             var dropZones = [
                 new dropzone_1.DropZone(_this, 200, 200, 50, "DOTCARD"),
-                new dropzone_1.DropZone(_this, 300, 200, 50, "NUMBERTILE")
+                new dropzone_1.DropZone(_this, 200, 350, 50, "DOTCARD"),
+                new dropzone_1.DropZone(_this, 300, 200, 50, "NUMBERTILE"),
+                new dropzone_1.DropZone(_this, 300, 300, 50, "NUMBERTILE"),
             ];
             for (var _i = 0, dropZones_1 = dropZones; _i < dropZones_1.length; _i++) {
                 var dropZone = dropZones_1[_i];
@@ -283,12 +285,12 @@ var TestSpace = (function (_super) {
             // let bar=new Bar(this, 10, manipulative, dropZone);
             // bar.render(300, 300);
             var dotCards = [
-                new dotcard_1.DotCard(_this, 3, dropZones[0]),
-                new dotcard_1.DotCard(_this, 4, dropZones[0])
+                new dotcard_1.DotCard(_this, 3, [dropZones[0], dropZones[1]]),
+                new dotcard_1.DotCard(_this, 4, [dropZones[0], dropZones[1]])
             ];
             var numberTiles = [
-                new numbertile_1.NumberTile(_this, 3, dropZones[1]),
-                new numbertile_1.NumberTile(_this, 4, dropZones[1])
+                new numbertile_1.NumberTile(_this, 3, [dropZones[2], dropZones[3]]),
+                new numbertile_1.NumberTile(_this, 4, [dropZones[2], dropZones[3]])
             ];
             var y = 500;
             var x = 100;
@@ -342,10 +344,10 @@ var DropZone = (function () {
         this.acceptedType = anAcceptedType;
     }
     DropZone.prototype.render = function () {
-        var dropZone = this.targetScene.add.sprite(this.x, this.y, "dropzone");
-        dropZone.setAlpha(0.8);
+        this.dropZone = this.targetScene.add.sprite(this.x, this.y, "dropzone");
+        this.dropZone.setAlpha(0.8);
         this.targetScene.tweens.add({
-            targets: [dropZone],
+            targets: [this.dropZone],
             alpha: 0.3,
             duration: 2000,
             ease: "Sine.easeInOut",
@@ -357,18 +359,23 @@ var DropZone = (function () {
                 break;
             case "DOTCARD":
                 console.log("DOTCARD");
-                dropZone.scaleX = 1.5;
-                dropZone.scaleY = 2;
+                this.dropZone.displayWidth = 75;
+                this.dropZone.displayHeight = 100;
                 break;
             case "NUMBERTILE":
+                this.dropZone.displayWidth = 60;
+                this.dropZone.displayHeight = 60;
                 break;
             default:
                 break;
         }
     };
     DropZone.prototype.checkBounds = function (x, y, manipulative) {
-        if (((x >= this.x - this.pullRadius && x <= this.x + this.pullRadius)
-            && (y >= this.y - this.pullRadius && y <= this.y + this.pullRadius))
+        console.log("DROPPED AT " + x + ", " + y);
+        console.log("BOUNDING BOX: " + (this.x + this.dropZone.displayWidth) + ", " + (this.x - this.dropZone.displayWidth) + ", " + (this.y + this.dropZone.displayHeight) + "," + (this.y - this.dropZone.displayHeight));
+        if ((x < this.x + this.dropZone.displayWidth && x > this.x - this.dropZone.displayWidth)
+            &&
+                (y < this.y + this.dropZone.displayHeight && y > this.y - this.dropZone.displayHeight)
             && manipulative.type == this.acceptedType) {
             return true;
         }
@@ -415,11 +422,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 var manipulatives_1 = require("./manipulatives");
 var DotCard = (function (_super) {
     __extends(DotCard, _super);
-    function DotCard(theTargetScene, aValue, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+    function DotCard(theTargetScene, aValue, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
         var _this = this;
         var frame = aValue.toString();
         var dotCard = theTargetScene.add.sprite(0, 0, "dotcards", frame);
-        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, aDragPoint) || this;
+        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, someDragPoints) || this;
         return _this;
     }
     //dotcard specific rendering method
@@ -438,7 +445,7 @@ var soundmanager_1 = require("../soundmanager");
 var Manipulative = (function () {
     function Manipulative(theTargetScene, aValue, aType, 
         // aResource:string,
-        aSprite, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
+        aSprite, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
         this.isDragging = false;
         this.startDragMS = 0;
         this.minDragDelay = 400;
@@ -451,7 +458,7 @@ var Manipulative = (function () {
         this.onPointerDown = pointerdownCallback;
         this.onPointerOver = pointeroverCallback;
         this.onPointerOut = pointeroutCallback;
-        this.dragPoint = aDragPoint;
+        this.dragPoints = someDragPoints;
         this.dragSprite = aSprite;
         this.dragSprite.visible = false;
         this.soundManager = new soundmanager_1.SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"]);
@@ -483,15 +490,6 @@ var Manipulative = (function () {
             }
         });
     };
-    // private checkBounds(x, y){
-    //     if((x >= this.dragPoint.x-this.dragPoint.pullRadius && x <= this.dragPoint.x+this.dragPoint.pullRadius) 
-    //     && (y >=this.dragPoint.y-this.dragPoint.pullRadius && y <=this.dragPoint.y+this.dragPoint.pullRadius)){
-    //         return true;
-    //     }
-    //     else{
-    //         return false;
-    //     }
-    // }
     Manipulative.prototype.startDrag = function () {
         // this.pickUp.play();
         this.soundManager.play("pickUp");
@@ -500,22 +498,23 @@ var Manipulative = (function () {
         this.startDragMS = Date.now();
     };
     Manipulative.prototype.stopDrag = function (originX, originY) {
-        //dragSprite.x=this.dragPoint.x;
-        //dragSprite.y=this.dragPoint.y;
-        //this.dragSprite.setScale(this.origScale);
-        // this.dropHit.play();
-        if (this.dragPoint.checkBounds(this.dragSprite.x, this.dragSprite.y, this)) {
-            this.soundManager.play("dropHit");
-            this.dragSprite.x = this.dragPoint.x;
-            this.dragSprite.y = this.dragPoint.y;
-            this.dragPoint.manipulativeInZone = this;
-            console.log(this.dragPoint.manipulativeInZone.value);
+        var isInBounds = false;
+        for (var i = 0; i < this.dragPoints.length; i++) {
+            if (this.dragPoints[i].checkBounds(this.dragSprite.x, this.dragSprite.y, this)) {
+                this.soundManager.play("dropHit");
+                this.dragSprite.x = this.dragPoints[i].x;
+                this.dragSprite.y = this.dragPoints[i].y;
+                console.log("TRUE!");
+                isInBounds = true;
+                ;
+            }
         }
-        else {
+        if (!isInBounds) {
             this.soundManager.play("dropMiss");
             this.dragSprite.x = originX;
             this.dragSprite.y = originY;
         }
+        console.log("FALSE!");
         this.isDragging = false;
     };
     Manipulative.prototype.activateOnMouseOver = function () {
@@ -563,12 +562,12 @@ var __extends = (this && this.__extends) || function (d, b) {
 var manipulatives_1 = require("./manipulatives");
 var NumberTile = (function (_super) {
     __extends(NumberTile, _super);
-    function NumberTile(theTargetScene, aValue, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+    function NumberTile(theTargetScene, aValue, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
         var _this = this;
         var frame = aValue.toString();
         var numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", frame + "_tex.png");
         // console.log(numberTile)
-        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.NUMBERTILE, numberTile, aDragPoint) || this;
+        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.NUMBERTILE, numberTile, someDragPoints) || this;
         return _this;
     }
     //dotcard specific rendering method

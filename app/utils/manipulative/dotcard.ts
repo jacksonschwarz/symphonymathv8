@@ -5,14 +5,14 @@ export class DotCard extends Manipulative {
         constructor(        
             theTargetScene:any,
             aValue:number,
-            aDragPoint:DropZone,
+            someDragPoints:DropZone[],
             clickCallback?:()=>void,
             pointerdownCallback?:()=>void,
             pointeroverCallback?:()=>void,
             pointerupCallback?:()=>void,){
             let frame=aValue.toString();
             let dotCard=theTargetScene.add.sprite(0, 0, "dotcards", frame)
-            super(theTargetScene, aValue, ManipulativeType.DOTCARD, dotCard, aDragPoint);
+            super(theTargetScene, aValue, ManipulativeType.DOTCARD, dotCard, someDragPoints);
     
             
         }

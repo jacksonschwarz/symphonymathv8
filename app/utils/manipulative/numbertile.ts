@@ -6,7 +6,7 @@ export class NumberTile extends Manipulative {
         constructor(        
             theTargetScene:any,
             aValue:number,
-            aDragPoint:DropZone,
+            someDragPoints:DropZone[],
             clickCallback?:()=>void,
             pointerdownCallback?:()=>void,
             pointeroverCallback?:()=>void,
@@ -14,7 +14,7 @@ export class NumberTile extends Manipulative {
             let frame=aValue.toString();
             let numberTile=theTargetScene.add.sprite(0, 0, "numbertiles", frame+"_tex.png")
             // console.log(numberTile)
-            super(theTargetScene, aValue, ManipulativeType.NUMBERTILE, numberTile, aDragPoint);
+            super(theTargetScene, aValue, ManipulativeType.NUMBERTILE, numberTile, someDragPoints);
     
             
         }

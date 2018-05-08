@@ -24,11 +24,12 @@ export class DropZone{
         this.pullRadius=aPullRadius;
         this.acceptedType=anAcceptedType;
     }
+    dropZone;
     render(){
-        let dropZone=this.targetScene.add.sprite(this.x, this.y, "dropzone");
-        dropZone.setAlpha(0.8);
+        this.dropZone=this.targetScene.add.sprite(this.x, this.y, "dropzone");
+        this.dropZone.setAlpha(0.8);
         this.targetScene.tweens.add({
-            targets:[dropZone],
+            targets:[this.dropZone],
             alpha:0.3,
             duration:2000,
             ease:"Sine.easeInOut",
@@ -40,20 +41,26 @@ export class DropZone{
                 break;
             case "DOTCARD":
                 console.log("DOTCARD")
-                dropZone.scaleX=1.5
-                dropZone.scaleY=2
+                this.dropZone.displayWidth=75
+                this.dropZone.displayHeight=100
+
                 break;
             case "NUMBERTILE":
-
+            this.dropZone.displayWidth=60
+            this.dropZone.displayHeight=60
                 break;
             default:
                 break;
         }
-    }  
+    }
     checkBounds(x, y,manipulative:Manipulative){
-        if(((x >= this.x-this.pullRadius && x <= this.x+this.pullRadius) 
-        && (y >=this.y-this.pullRadius && y <=this.y+this.pullRadius))
-        && manipulative.type == this.acceptedType){
+        console.log(`DROPPED AT ${x}, ${y}`)
+        console.log(`BOUNDING BOX: ${this.x + this.dropZone.displayWidth}, ${this.x - this.dropZone.displayWidth}, ${this.y+this.dropZone.displayHeight},${this.y-this.dropZone.displayHeight}`)
+        if(
+            (x < this.x + this.dropZone.displayWidth && x > this.x-this.dropZone.displayWidth)
+            &&
+            (y < this.y + this.dropZone.displayHeight && y > this.y-this.dropZone.displayHeight)
+            && manipulative.type == this.acceptedType){
             return true;
         }
         else{

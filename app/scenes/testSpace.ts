@@ -29,7 +29,10 @@ export class TestSpace extends Phaser.Scene{
         let bg=new Background(this, "plains");
         let dropZones=[
             new DropZone(this, 200, 200, 50, "DOTCARD"),
-            new DropZone(this, 300, 200, 50, "NUMBERTILE")
+            new DropZone(this, 200, 350, 50, "DOTCARD"),
+            new DropZone(this, 300, 200, 50, "NUMBERTILE"),
+            new DropZone(this, 300, 300, 50, "NUMBERTILE"),
+            
         ]
         for(let dropZone of dropZones){
             dropZone.render()
@@ -44,12 +47,12 @@ export class TestSpace extends Phaser.Scene{
         // let bar=new Bar(this, 10, manipulative, dropZone);
         // bar.render(300, 300);
         let dotCards=[
-            new DotCard(this, 3, dropZones[0]),
-            new DotCard(this, 4, dropZones[0])
+            new DotCard(this, 3, [dropZones[0], dropZones[1]]),
+            new DotCard(this, 4, [dropZones[0], dropZones[1]])
         ];
         let numberTiles=[
-            new NumberTile(this, 3, dropZones[1]),
-            new NumberTile(this, 4, dropZones[1])
+            new NumberTile(this, 3, [dropZones[2], dropZones[3]]),
+            new NumberTile(this, 4, [dropZones[2], dropZones[3]])
         ];
         let y=500;
         let x=100;
