@@ -1,4 +1,7 @@
-import {Manipulative, Bar} from "../utils/manipulatives";
+import {Manipulative} from "../utils/manipulative/manipulatives";
+import {Bar} from "../utils/manipulative/bar";
+import {DotCard} from "../utils/manipulative/dotcard";
+
 export class TestSpace extends Phaser.Scene{
     constructor(){
         super({

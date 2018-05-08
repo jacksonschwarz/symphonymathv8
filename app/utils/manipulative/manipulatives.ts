@@ -1,3 +1,5 @@
+import {SoundManager} from "../soundmanager";
+
 export class Manipulative{
     targetScene:any;
     value:number;
@@ -7,6 +9,8 @@ export class Manipulative{
     onPointerDown:()=>void;
     onPointerOver:()=>void;
     onPointerOut:()=>void;
+
+    soundManager;
 
     dragPoint:{
         x:number,
@@ -40,6 +44,10 @@ export class Manipulative{
         this.onPointerOver=pointeroverCallback;
         this.onPointerOut=pointeroutCallback;
         this.dragPoint=aDragPoint;
+
+
+        this.soundManager=new SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"])
+
     }
  
     isDragging:boolean=false;
@@ -89,7 +97,8 @@ export class Manipulative{
     }
     private startDrag() {
         console.log("pointer down, starting follow....");
-        this.pickUp.play();
+        // this.pickUp.play();
+        this.soundManager.play("pickUp");
         //this.dragSprite.setScale(this.origScale *1.3);
         this.isDragging=true;
         this.startDragMS = Date.now();                
@@ -99,7 +108,8 @@ export class Manipulative{
         //dragSprite.x=this.dragPoint.x;
         //dragSprite.y=this.dragPoint.y;
         //this.dragSprite.setScale(this.origScale);
-        this.dropHit.play();
+        // this.dropHit.play();
+        this.soundManager.play("dropHit");
         this.isDragging=false;
     }
     render(x, y, scale?){
@@ -108,7 +118,7 @@ export class Manipulative{
         this.dragSprite.setInteractive();
         this.origScale = this.dragSprite.scale;
         console.log(this.origScale);
-        this.pickUp=this.targetScene.sound.add("pickUp");
+        // this.pickUp=this.targetScene.sound.add("pickUp");
         this.dropHit=this.targetScene.sound.add("dropHit");
         this.dropMiss=this.targetScene.sound.add("dropMiss");
         let isDragging=false;
@@ -116,34 +126,9 @@ export class Manipulative{
     }
 
 }
-enum ManipulativeType{
+export enum ManipulativeType{
     BAR="BAR",
     DOTCARD="DOTCARD",
 }
-export class Bar extends Manipulative {
 
-    constructor(        
-        theTargetScene:any,
-        aValue:number,
-        aResource:string,
-        aDragPoint:{
-            x:number,
-            y:number,
-            pullRadius:number,
-            acceptedType:string | ManipulativeType
-        },
-        clickCallback?:()=>void,
-        pointerdownCallback?:()=>void,
-        pointeroverCallback?:()=>void,
-        pointerupCallback?:()=>void,){
-        super(theTargetScene, aValue, ManipulativeType.BAR, aResource, aDragPoint);
-
-        
-    }
-    //bar specific rendering method
-    render(x, y){
-        super.render(x, y);
-    }
-
-}
 

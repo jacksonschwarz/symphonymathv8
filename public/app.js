@@ -238,7 +238,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var manipulatives_1 = require("../utils/manipulatives");
+var bar_1 = require("../utils/manipulative/bar");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
     function TestSpace() {
@@ -257,7 +257,7 @@ var TestSpace = (function (_super) {
         _this.create = function () {
             _this.add.text(100, 200, "Try to drag and drop the white bar onto the red circle:");
             _this.add.image(400, 400, "obstacle");
-            var bar = new manipulatives_1.Bar(_this, 10, "manipulative", { x: 400, y: 400, pullRadius: 50, acceptedType: "BAR" });
+            var bar = new bar_1.Bar(_this, 10, "manipulative", { x: 400, y: 400, pullRadius: 50, acceptedType: "BAR" });
             bar.render(300, 300);
         };
         return _this;
@@ -268,13 +268,55 @@ exports.TestSpace = TestSpace;
 //# sourceMappingURL=testSpace.js.map
 });
 
-;require.register("utils/manipulatives.ts", function(exports, require, module) {
+;require.register("utils/manipulative/bar.ts", function(exports, require, module) {
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var manipulatives_1 = require("./manipulatives");
+var Bar = (function (_super) {
+    __extends(Bar, _super);
+    function Bar(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        return _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.BAR, aResource, aDragPoint) || this;
+    }
+    //bar specific rendering method
+    Bar.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return Bar;
+}(manipulatives_1.Manipulative));
+exports.Bar = Bar;
+//# sourceMappingURL=bar.js.map
+});
+
+;require.register("utils/manipulative/dotcard.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var manipulatives_1 = require("./manipulatives");
+var DotCard = (function (_super) {
+    __extends(DotCard, _super);
+    function DotCard(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        return _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, aResource, aDragPoint) || this;
+    }
+    //bar specific rendering method
+    DotCard.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return DotCard;
+}(manipulatives_1.Manipulative));
+exports.DotCard = DotCard;
+//# sourceMappingURL=dotcard.js.map
+});
+
+;require.register("utils/manipulative/manipulatives.ts", function(exports, require, module) {
+"use strict";
+var soundmanager_1 = require("../soundmanager");
 var Manipulative = (function () {
     function Manipulative(theTargetScene, aValue, aType, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
         this.isDragging = false;
@@ -289,6 +331,7 @@ var Manipulative = (function () {
         this.onPointerOver = pointeroverCallback;
         this.onPointerOut = pointeroutCallback;
         this.dragPoint = aDragPoint;
+        this.soundManager = new soundmanager_1.SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"]);
     }
     Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
         var _this = this;
@@ -328,7 +371,8 @@ var Manipulative = (function () {
     };
     Manipulative.prototype.startDrag = function () {
         console.log("pointer down, starting follow....");
-        this.pickUp.play();
+        // this.pickUp.play();
+        this.soundManager.play("pickUp");
         //this.dragSprite.setScale(this.origScale *1.3);
         this.isDragging = true;
         this.startDragMS = Date.now();
@@ -338,7 +382,8 @@ var Manipulative = (function () {
         //dragSprite.x=this.dragPoint.x;
         //dragSprite.y=this.dragPoint.y;
         //this.dragSprite.setScale(this.origScale);
-        this.dropHit.play();
+        // this.dropHit.play();
+        this.soundManager.play("dropHit");
         this.isDragging = false;
     };
     Manipulative.prototype.render = function (x, y, scale) {
@@ -347,7 +392,7 @@ var Manipulative = (function () {
         this.dragSprite.setInteractive();
         this.origScale = this.dragSprite.scale;
         console.log(this.origScale);
-        this.pickUp = this.targetScene.sound.add("pickUp");
+        // this.pickUp=this.targetScene.sound.add("pickUp");
         this.dropHit = this.targetScene.sound.add("dropHit");
         this.dropMiss = this.targetScene.sound.add("dropMiss");
         var isDragging = false;
@@ -360,20 +405,34 @@ var ManipulativeType;
 (function (ManipulativeType) {
     ManipulativeType[ManipulativeType["BAR"] = "BAR"] = "BAR";
     ManipulativeType[ManipulativeType["DOTCARD"] = "DOTCARD"] = "DOTCARD";
-})(ManipulativeType || (ManipulativeType = {}));
-var Bar = (function (_super) {
-    __extends(Bar, _super);
-    function Bar(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
-        return _super.call(this, theTargetScene, aValue, ManipulativeType.BAR, aResource, aDragPoint) || this;
-    }
-    //bar specific rendering method
-    Bar.prototype.render = function (x, y) {
-        _super.prototype.render.call(this, x, y);
-    };
-    return Bar;
-}(Manipulative));
-exports.Bar = Bar;
+})(ManipulativeType = exports.ManipulativeType || (exports.ManipulativeType = {}));
 //# sourceMappingURL=manipulatives.js.map
+});
+
+;require.register("utils/soundmanager.ts", function(exports, require, module) {
+"use strict";
+var SoundManager = (function () {
+    function SoundManager(aTargetScene, someSoundKeys) {
+        //an array of sound objects to play
+        this.sounds = [];
+        this.targetScene = aTargetScene;
+        this.soundKeys = someSoundKeys;
+        console.log(aTargetScene);
+        for (var i = 0; i < someSoundKeys.length; i++) {
+            aTargetScene.load.audio(someSoundKeys[i], "sounds/" + someSoundKeys[i] + ".mp3");
+            this.sounds.push(aTargetScene.sound.add(someSoundKeys[i]));
+        }
+        console.log(this.sounds);
+    }
+    SoundManager.prototype.play = function (sound) {
+        var index = this.soundKeys.indexOf(sound);
+        console.log(sound, index);
+        this.sounds[index].play();
+    };
+    return SoundManager;
+}());
+exports.SoundManager = SoundManager;
+//# sourceMappingURL=soundmanager.js.map
 });
 
 ;require.register("___globals___", function(exports, require, module) {
