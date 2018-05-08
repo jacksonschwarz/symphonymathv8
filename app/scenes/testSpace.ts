@@ -50,15 +50,18 @@ export class TestSpace extends Phaser.Scene{
             new DotCard(this, 3, [dropZones[0], dropZones[1]]),
             new DotCard(this, 4, [dropZones[0], dropZones[1]])
         ];
+
         let numberTiles=[
             new NumberTile(this, 3, [dropZones[2], dropZones[3]]),
             new NumberTile(this, 4, [dropZones[2], dropZones[3]])
         ];
+        for(let dotCard of dotCards){
+            dotCard.dragSprite.setScale(0.5)
+        }
         let y=500;
         let x=100;
         for(let dotCard of dotCards){
             dotCard.render(x, y)
-            dotCard.dragSprite.setScale(0.5)
             x+=100
         }
         for(let numberTile of numberTiles){

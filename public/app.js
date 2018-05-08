@@ -292,16 +292,19 @@ var TestSpace = (function (_super) {
                 new numbertile_1.NumberTile(_this, 3, [dropZones[2], dropZones[3]]),
                 new numbertile_1.NumberTile(_this, 4, [dropZones[2], dropZones[3]])
             ];
-            var y = 500;
-            var x = 100;
             for (var _a = 0, dotCards_1 = dotCards; _a < dotCards_1.length; _a++) {
                 var dotCard = dotCards_1[_a];
-                dotCard.render(x, y);
                 dotCard.dragSprite.setScale(0.5);
+            }
+            var y = 500;
+            var x = 100;
+            for (var _b = 0, dotCards_2 = dotCards; _b < dotCards_2.length; _b++) {
+                var dotCard = dotCards_2[_b];
+                dotCard.render(x, y);
                 x += 100;
             }
-            for (var _b = 0, numberTiles_1 = numberTiles; _b < numberTiles_1.length; _b++) {
-                var numberTile = numberTiles_1[_b];
+            for (var _c = 0, numberTiles_1 = numberTiles; _c < numberTiles_1.length; _c++) {
+                var numberTile = numberTiles_1[_c];
                 numberTile.render(x, y);
                 x += 100;
             }
@@ -371,8 +374,6 @@ var DropZone = (function () {
         }
     };
     DropZone.prototype.checkBounds = function (x, y, manipulative) {
-        console.log("DROPPED AT " + x + ", " + y);
-        console.log("BOUNDING BOX: " + (this.x + this.dropZone.displayWidth) + ", " + (this.x - this.dropZone.displayWidth) + ", " + (this.y + this.dropZone.displayHeight) + "," + (this.y - this.dropZone.displayHeight));
         if ((x < this.x + this.dropZone.displayWidth && x > this.x - this.dropZone.displayWidth)
             &&
                 (y < this.y + this.dropZone.displayHeight && y > this.y - this.dropZone.displayHeight)
@@ -460,6 +461,13 @@ var Manipulative = (function () {
         this.onPointerOut = pointeroutCallback;
         this.dragPoints = someDragPoints;
         this.dragSprite = aSprite;
+        //dotcards too big hotfix
+        if (this.type == ManipulativeType.DOTCARD) {
+            this.originalScale = 0.5;
+        }
+        else {
+            this.originalScale = this.dragSprite.scaleX;
+        }
         this.dragSprite.visible = false;
         this.soundManager = new soundmanager_1.SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"]);
     }
@@ -491,22 +499,40 @@ var Manipulative = (function () {
         });
     };
     Manipulative.prototype.startDrag = function () {
-        // this.pickUp.play();
-        this.soundManager.play("pickUp");
-        //this.dragSprite.setScale(this.origScale *1.3);
-        this.isDragging = true;
-        this.startDragMS = Date.now();
+        if (!this.isDragging) {
+            // this.pickUp.play();
+            this.soundManager.play("pickUp");
+            //this.dragSprite.setScale(this.origScale *1.3);
+            this.isDragging = true;
+            this.startDragMS = Date.now();
+        }
     };
     Manipulative.prototype.stopDrag = function (originX, originY) {
         var isInBounds = false;
         for (var i = 0; i < this.dragPoints.length; i++) {
             if (this.dragPoints[i].checkBounds(this.dragSprite.x, this.dragSprite.y, this)) {
-                this.soundManager.play("dropHit");
-                this.dragSprite.x = this.dragPoints[i].x;
-                this.dragSprite.y = this.dragPoints[i].y;
-                console.log("TRUE!");
-                isInBounds = true;
-                ;
+                if (!this.dragPoints[i].manipulativeInZone) {
+                    this.soundManager.play("dropHit");
+                    this.dragSprite.x = this.dragPoints[i].x;
+                    this.dragSprite.y = this.dragPoints[i].y;
+                    this.dragPoints[i].manipulativeInZone = this;
+                    isInBounds = true;
+                    ;
+                }
+                else {
+                    console.log("found manipulative in spot, switching...");
+                    var man = this.dragPoints[i].manipulativeInZone;
+                    man.dragSprite.x = man.originalX;
+                    man.dragSprite.y = man.originalY;
+                    this.soundManager.play("dropHit");
+                    this.dragSprite.x = this.dragPoints[i].x;
+                    this.dragSprite.y = this.dragPoints[i].y;
+                    this.dragPoints[i].manipulativeInZone = this;
+                    isInBounds = true;
+                }
+            }
+            else {
+                this.dragPoints[i].manipulativeInZone = undefined;
             }
         }
         if (!isInBounds) {
@@ -514,19 +540,20 @@ var Manipulative = (function () {
             this.dragSprite.x = originX;
             this.dragSprite.y = originY;
         }
-        console.log("FALSE!");
         this.isDragging = false;
     };
     Manipulative.prototype.activateOnMouseOver = function () {
         var _this = this;
         this.dragSprite.on("pointerover", function () {
-            _this.dragSprite.setAlpha(0.75);
+            _this.dragSprite.setScale(_this.originalScale * 1.25);
         });
         this.dragSprite.on("pointerout", function () {
-            _this.dragSprite.setAlpha(1);
+            _this.dragSprite.setScale(_this.originalScale);
         });
     };
     Manipulative.prototype.render = function (x, y, scale) {
+        this.originalX = x;
+        this.originalY = y;
         this.dragSprite.visible = true;
         // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
         this.dragSprite.x = x;

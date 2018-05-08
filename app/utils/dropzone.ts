@@ -54,8 +54,6 @@ export class DropZone{
         }
     }
     checkBounds(x, y,manipulative:Manipulative){
-        console.log(`DROPPED AT ${x}, ${y}`)
-        console.log(`BOUNDING BOX: ${this.x + this.dropZone.displayWidth}, ${this.x - this.dropZone.displayWidth}, ${this.y+this.dropZone.displayHeight},${this.y-this.dropZone.displayHeight}`)
         if(
             (x < this.x + this.dropZone.displayWidth && x > this.x-this.dropZone.displayWidth)
             &&

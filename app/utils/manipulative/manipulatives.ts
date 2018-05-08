@@ -15,6 +15,10 @@ export class Manipulative{
 
     dragPoints:DropZone[];
 
+    originalX:number;
+    originalY:number;
+    originalScale:number;
+
     constructor(
         theTargetScene:any,
         aValue:number,
@@ -39,8 +43,17 @@ export class Manipulative{
         this.dragPoints=someDragPoints;
         this.dragSprite=aSprite;
 
+        //dotcards too big hotfix
+        if(this.type == ManipulativeType.DOTCARD){
+            this.originalScale=0.5
+        }
+        else{
+            this.originalScale=this.dragSprite.scaleX;            
+        }
+
         this.dragSprite.visible=false;
-    
+        
+
         this.soundManager=new SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"])
 
     }
@@ -79,22 +92,41 @@ export class Manipulative{
         })
     }
     private startDrag() {
+        if(!this.isDragging){
         // this.pickUp.play();
         this.soundManager.play("pickUp");
         //this.dragSprite.setScale(this.origScale *1.3);
         this.isDragging=true;
-        this.startDragMS = Date.now();                
+        this.startDragMS = Date.now(); 
+        }
+               
     }
     private stopDrag(originX, originY) {
         let isInBounds=false;
         for(let i=0;i<this.dragPoints.length;i++){
             if(this.dragPoints[i].checkBounds(this.dragSprite.x, this.dragSprite.y, this)){
-                this.soundManager.play("dropHit");
-                this.dragSprite.x=this.dragPoints[i].x;
-                this.dragSprite.y=this.dragPoints[i].y;
 
-                console.log("TRUE!")
-                isInBounds=true;;
+                if(!this.dragPoints[i].manipulativeInZone){
+                    this.soundManager.play("dropHit");
+                    this.dragSprite.x=this.dragPoints[i].x;
+                    this.dragSprite.y=this.dragPoints[i].y;
+                    this.dragPoints[i].manipulativeInZone=this;
+                    isInBounds=true;;
+                }
+                else{
+                    console.log("found manipulative in spot, switching...")
+                    let man=this.dragPoints[i].manipulativeInZone
+                    man.dragSprite.x=man.originalX;
+                    man.dragSprite.y=man.originalY;
+                    this.soundManager.play("dropHit");
+                    this.dragSprite.x=this.dragPoints[i].x;
+                    this.dragSprite.y=this.dragPoints[i].y;
+                    this.dragPoints[i].manipulativeInZone=this;
+                    isInBounds=true;
+                }
+            }
+            else{
+                this.dragPoints[i].manipulativeInZone=undefined;
             }
         }
         if(!isInBounds){
@@ -103,19 +135,20 @@ export class Manipulative{
             this.dragSprite.y=originY
         }
 
-        console.log("FALSE!")
 
         this.isDragging=false;
     }
     private activateOnMouseOver(){
         this.dragSprite.on("pointerover", ()=>{
-            this.dragSprite.setAlpha(0.75)
+            this.dragSprite.setScale(this.originalScale*1.25)
         })
         this.dragSprite.on("pointerout", ()=>{
-            this.dragSprite.setAlpha(1);
+            this.dragSprite.setScale(this.originalScale);
         })
     }
     render(x, y, scale?){
+        this.originalX=x;
+        this.originalY=y;
         this.dragSprite.visible=true;
         // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
         this.dragSprite.x=x;
