@@ -1,6 +1,7 @@
-import {Manipulative} from "../utils/manipulative/manipulatives";
+import {Manipulative, ManipulativeType} from "../utils/manipulative/manipulatives";
 import {Bar} from "../utils/manipulative/bar";
 import {DotCard} from "../utils/manipulative/dotcard";
+import {NumberTile} from "../utils/manipulative/numbertile";
 
 import {DropZone} from "../utils/dropzone";
 import {Background} from "../utils/background";
@@ -18,6 +19,7 @@ export class TestSpace extends Phaser.Scene{
         this.load.image("plains", "plain 2.jpg")
         this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json")
         this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json")
+        this.load.atlas("numbertiles", "atlas/numberTiles.png", "atlas/numberTiles.json")
         this.load.audio("dropHit", "sounds/dropHit.mp3", null, null)
         this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null)
         this.load.audio("pickUp", "sounds/pickUp.mp3", null, null)
@@ -25,8 +27,13 @@ export class TestSpace extends Phaser.Scene{
     }
     create=()=>{
         let bg=new Background(this, "plains");
-        let dropZone=new DropZone(this, 500, 200, 50, "DOTCARD")
-        dropZone.render();
+        let dropZones=[
+            new DropZone(this, 200, 200, 50, "DOTCARD"),
+            new DropZone(this, 300, 200, 50, "NUMBERTILE")
+        ]
+        for(let dropZone of dropZones){
+            dropZone.render()
+        }
     
         // this.add.image(400, 400, "obstacle");
         // let manipulative=this.add.sprite(0, 0, 'manipulative')
@@ -36,8 +43,28 @@ export class TestSpace extends Phaser.Scene{
         // let dropZone=new DropZone(this, 400, 400, 50, "BAR")
         // let bar=new Bar(this, 10, manipulative, dropZone);
         // bar.render(300, 300);
-        let dotCard=new DotCard(this, 3, dropZone);
-        dotCard.dragSprite.setScale(0.5)
-        dotCard.render(500, 500);
+        let dotCards=[
+            new DotCard(this, 3, dropZones[0]),
+            new DotCard(this, 4, dropZones[0])
+        ];
+        let numberTiles=[
+            new NumberTile(this, 3, dropZones[1]),
+            new NumberTile(this, 4, dropZones[1])
+        ];
+        let y=500;
+        let x=100;
+        for(let dotCard of dotCards){
+            dotCard.render(x, y)
+            dotCard.dragSprite.setScale(0.5)
+            x+=100
+        }
+        for(let numberTile of numberTiles){
+            numberTile.render(x, y)
+            x+=100;
+        }
+        // let dotCard=new DotCard(this, 3, dropZone);
+        // dotCard.dragSprite.setScale(0.5)
+        // dotCard.render(500, 500);
+
     }
 }

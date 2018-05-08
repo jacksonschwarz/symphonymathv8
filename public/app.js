@@ -245,6 +245,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var dotcard_1 = require("../utils/manipulative/dotcard");
+var numbertile_1 = require("../utils/manipulative/numbertile");
 var dropzone_1 = require("../utils/dropzone");
 var background_1 = require("../utils/background");
 var TestSpace = (function (_super) {
@@ -260,23 +261,51 @@ var TestSpace = (function (_super) {
             _this.load.image("plains", "plain 2.jpg");
             _this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json");
             _this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json");
+            _this.load.atlas("numbertiles", "atlas/numberTiles.png", "atlas/numberTiles.json");
             _this.load.audio("dropHit", "sounds/dropHit.mp3", null, null);
             _this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null);
             _this.load.audio("pickUp", "sounds/pickUp.mp3", null, null);
         };
         _this.create = function () {
             var bg = new background_1.Background(_this, "plains");
-            var dropZone = new dropzone_1.DropZone(_this, 500, 200, 50, "DOTCARD");
-            dropZone.render();
+            var dropZones = [
+                new dropzone_1.DropZone(_this, 200, 200, 50, "DOTCARD"),
+                new dropzone_1.DropZone(_this, 300, 200, 50, "NUMBERTILE")
+            ];
+            for (var _i = 0, dropZones_1 = dropZones; _i < dropZones_1.length; _i++) {
+                var dropZone = dropZones_1[_i];
+                dropZone.render();
+            }
             // this.add.image(400, 400, "obstacle");
             // let manipulative=this.add.sprite(0, 0, 'manipulative')
             // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
             // let dropZone=new DropZone(this, 400, 400, 50, "BAR")
             // let bar=new Bar(this, 10, manipulative, dropZone);
             // bar.render(300, 300);
-            var dotCard = new dotcard_1.DotCard(_this, 3, dropZone);
-            dotCard.dragSprite.setScale(0.5);
-            dotCard.render(500, 500);
+            var dotCards = [
+                new dotcard_1.DotCard(_this, 3, dropZones[0]),
+                new dotcard_1.DotCard(_this, 4, dropZones[0])
+            ];
+            var numberTiles = [
+                new numbertile_1.NumberTile(_this, 3, dropZones[1]),
+                new numbertile_1.NumberTile(_this, 4, dropZones[1])
+            ];
+            var y = 500;
+            var x = 100;
+            for (var _a = 0, dotCards_1 = dotCards; _a < dotCards_1.length; _a++) {
+                var dotCard = dotCards_1[_a];
+                dotCard.render(x, y);
+                dotCard.dragSprite.setScale(0.5);
+                x += 100;
+            }
+            for (var _b = 0, numberTiles_1 = numberTiles; _b < numberTiles_1.length; _b++) {
+                var numberTile = numberTiles_1[_b];
+                numberTile.render(x, y);
+                x += 100;
+            }
+            // let dotCard=new DotCard(this, 3, dropZone);
+            // dotCard.dragSprite.setScale(0.5)
+            // dotCard.render(500, 500);
         };
         return _this;
     }
@@ -323,6 +352,19 @@ var DropZone = (function () {
             yoyo: true,
             repeat: -1
         });
+        switch (this.acceptedType) {
+            case "BAR":
+                break;
+            case "DOTCARD":
+                console.log("DOTCARD");
+                dropZone.scaleX = 1.5;
+                dropZone.scaleY = 2;
+                break;
+            case "NUMBERTILE":
+                break;
+            default:
+                break;
+        }
     };
     DropZone.prototype.checkBounds = function (x, y, manipulative) {
         if (((x >= this.x - this.pullRadius && x <= this.x + this.pullRadius)
@@ -340,6 +382,29 @@ exports.DropZone = DropZone;
 //# sourceMappingURL=dropzone.js.map
 });
 
+;require.register("utils/manipulative/bar.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var manipulatives_1 = require("./manipulatives");
+var Bar = (function (_super) {
+    __extends(Bar, _super);
+    function Bar(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        return _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.BAR, aResource, aDragPoint) || this;
+    }
+    //bar specific rendering method
+    Bar.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return Bar;
+}(manipulatives_1.Manipulative));
+exports.Bar = Bar;
+//# sourceMappingURL=bar.js.map
+});
+
 ;require.register("utils/manipulative/dotcard.ts", function(exports, require, module) {
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -354,7 +419,6 @@ var DotCard = (function (_super) {
         var _this = this;
         var frame = aValue.toString();
         var dotCard = theTargetScene.add.sprite(0, 0, "dotcards", frame);
-        console.log(dotCard);
         _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, aDragPoint) || this;
         return _this;
     }
@@ -429,7 +493,6 @@ var Manipulative = (function () {
     //     }
     // }
     Manipulative.prototype.startDrag = function () {
-        console.log("pointer down, starting follow....");
         // this.pickUp.play();
         this.soundManager.play("pickUp");
         //this.dragSprite.setScale(this.origScale *1.3);
@@ -437,7 +500,6 @@ var Manipulative = (function () {
         this.startDragMS = Date.now();
     };
     Manipulative.prototype.stopDrag = function (originX, originY) {
-        console.log("pointer up, cancelling follow");
         //dragSprite.x=this.dragPoint.x;
         //dragSprite.y=this.dragPoint.y;
         //this.dragSprite.setScale(this.origScale);
@@ -446,6 +508,8 @@ var Manipulative = (function () {
             this.soundManager.play("dropHit");
             this.dragSprite.x = this.dragPoint.x;
             this.dragSprite.y = this.dragPoint.y;
+            this.dragPoint.manipulativeInZone = this;
+            console.log(this.dragPoint.manipulativeInZone.value);
         }
         else {
             this.soundManager.play("dropMiss");
@@ -465,13 +529,11 @@ var Manipulative = (function () {
     };
     Manipulative.prototype.render = function (x, y, scale) {
         this.dragSprite.visible = true;
-        console.log("render called!");
         // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
         this.dragSprite.x = x;
         this.dragSprite.y = y;
         this.dragSprite.setInteractive();
         this.origScale = this.dragSprite.scale;
-        console.log(this.origScale);
         // this.pickUp=this.targetScene.sound.add("pickUp");
         // this.dropHit=this.targetScene.sound.add("dropHit");
         // this.dropMiss=this.targetScene.sound.add("dropMiss");
@@ -486,8 +548,37 @@ var ManipulativeType;
 (function (ManipulativeType) {
     ManipulativeType[ManipulativeType["BAR"] = "BAR"] = "BAR";
     ManipulativeType[ManipulativeType["DOTCARD"] = "DOTCARD"] = "DOTCARD";
+    ManipulativeType[ManipulativeType["NUMBERTILE"] = "NUMBERTILE"] = "NUMBERTILE";
 })(ManipulativeType = exports.ManipulativeType || (exports.ManipulativeType = {}));
 //# sourceMappingURL=manipulatives.js.map
+});
+
+;require.register("utils/manipulative/numbertile.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var manipulatives_1 = require("./manipulatives");
+var NumberTile = (function (_super) {
+    __extends(NumberTile, _super);
+    function NumberTile(theTargetScene, aValue, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        var _this = this;
+        var frame = aValue.toString();
+        var numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", frame + "_tex.png");
+        // console.log(numberTile)
+        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.NUMBERTILE, numberTile, aDragPoint) || this;
+        return _this;
+    }
+    //dotcard specific rendering method
+    NumberTile.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return NumberTile;
+}(manipulatives_1.Manipulative));
+exports.NumberTile = NumberTile;
+//# sourceMappingURL=numbertile.js.map
 });
 
 ;require.register("utils/scalemanager.ts", function(exports, require, module) {
@@ -558,16 +649,13 @@ var SoundManager = (function () {
         this.sounds = [];
         this.targetScene = aTargetScene;
         this.soundKeys = someSoundKeys;
-        console.log(aTargetScene);
         for (var i = 0; i < someSoundKeys.length; i++) {
             aTargetScene.load.audio(someSoundKeys[i], "sounds/" + someSoundKeys[i] + ".mp3");
             this.sounds.push(aTargetScene.sound.add(someSoundKeys[i]));
         }
-        console.log(this.sounds);
     }
     SoundManager.prototype.play = function (sound) {
         var index = this.soundKeys.indexOf(sound);
-        console.log(sound, index);
         this.sounds[index].play();
     };
     return SoundManager;

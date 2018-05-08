@@ -8,6 +8,10 @@ export class DropZone{
     y:number;
     pullRadius:number;
     acceptedType:ManipulativeType | string;
+
+    //thinking for the future
+    manipulativeInZone:Manipulative;
+    
     constructor(aTargetScene:any,
                 destX:number, 
                 destY:number, 
@@ -31,6 +35,20 @@ export class DropZone{
             yoyo:true,
             repeat:-1
         })
+        switch(this.acceptedType){
+            case "BAR":
+                break;
+            case "DOTCARD":
+                console.log("DOTCARD")
+                dropZone.scaleX=1.5
+                dropZone.scaleY=2
+                break;
+            case "NUMBERTILE":
+
+                break;
+            default:
+                break;
+        }
     }  
     checkBounds(x, y,manipulative:Manipulative){
         if(((x >= this.x-this.pullRadius && x <= this.x+this.pullRadius) 

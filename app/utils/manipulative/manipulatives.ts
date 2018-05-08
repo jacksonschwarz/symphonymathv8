@@ -88,7 +88,6 @@ export class Manipulative{
     //     }
     // }
     private startDrag() {
-        console.log("pointer down, starting follow....");
         // this.pickUp.play();
         this.soundManager.play("pickUp");
         //this.dragSprite.setScale(this.origScale *1.3);
@@ -96,7 +95,6 @@ export class Manipulative{
         this.startDragMS = Date.now();                
     }
     private stopDrag(originX, originY) {
-        console.log("pointer up, cancelling follow");
         //dragSprite.x=this.dragPoint.x;
         //dragSprite.y=this.dragPoint.y;
         //this.dragSprite.setScale(this.origScale);
@@ -105,6 +103,8 @@ export class Manipulative{
             this.soundManager.play("dropHit");
             this.dragSprite.x=this.dragPoint.x;
             this.dragSprite.y=this.dragPoint.y;
+            this.dragPoint.manipulativeInZone=this
+            console.log(this.dragPoint.manipulativeInZone.value);
         }
         else{
             this.soundManager.play("dropMiss");
@@ -124,13 +124,11 @@ export class Manipulative{
     }
     render(x, y, scale?){
         this.dragSprite.visible=true;
-        console.log("render called!")
         // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
         this.dragSprite.x=x;
         this.dragSprite.y=y;
         this.dragSprite.setInteractive();
         this.origScale = this.dragSprite.scale;
-        console.log(this.origScale);
         // this.pickUp=this.targetScene.sound.add("pickUp");
         // this.dropHit=this.targetScene.sound.add("dropHit");
         // this.dropMiss=this.targetScene.sound.add("dropMiss");
@@ -143,6 +141,7 @@ export class Manipulative{
 export enum ManipulativeType{
     BAR="BAR",
     DOTCARD="DOTCARD",
+    NUMBERTILE="NUMBERTILE"
 }
 
 

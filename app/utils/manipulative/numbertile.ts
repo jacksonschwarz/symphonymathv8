@@ -1,6 +1,7 @@
 import {Manipulative, ManipulativeType} from './manipulatives';
 import {DropZone} from "../dropzone";
-export class DotCard extends Manipulative {
+
+export class NumberTile extends Manipulative {
     
         constructor(        
             theTargetScene:any,
@@ -11,15 +12,15 @@ export class DotCard extends Manipulative {
             pointeroverCallback?:()=>void,
             pointerupCallback?:()=>void,){
             let frame=aValue.toString();
-            let dotCard=theTargetScene.add.sprite(0, 0, "dotcards", frame)
-            super(theTargetScene, aValue, ManipulativeType.DOTCARD, dotCard, aDragPoint);
+            let numberTile=theTargetScene.add.sprite(0, 0, "numbertiles", frame+"_tex.png")
+            // console.log(numberTile)
+            super(theTargetScene, aValue, ManipulativeType.NUMBERTILE, numberTile, aDragPoint);
     
             
         }
         //dotcard specific rendering method
         render(x, y){
             super.render(x, y);
-            
         }
     
     }
