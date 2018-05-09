@@ -244,11 +244,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var dotcard_1 = require("../utils/manipulative/dotcard");
-var numbertile_1 = require("../utils/manipulative/numbertile");
-var dropzone_1 = require("../utils/dropzone");
 var background_1 = require("../utils/background");
-var narrationmanager_1 = require("../utils/narrationmanager");
+var task_1 = require("../utils/task/task");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
     function TestSpace() {
@@ -274,48 +271,46 @@ var TestSpace = (function (_super) {
         };
         _this.create = function () {
             var bg = new background_1.Background(_this, "plains");
-            var dropZones = [
-                new dropzone_1.DropZone(_this, 200, 200, 50, "DOTCARD"),
-                new dropzone_1.DropZone(_this, 200, 350, 50, "DOTCARD"),
-                new dropzone_1.DropZone(_this, 300, 200, 50, "NUMBERTILE"),
-                new dropzone_1.DropZone(_this, 300, 300, 50, "NUMBERTILE"),
-            ];
-            for (var _i = 0, dropZones_1 = dropZones; _i < dropZones_1.length; _i++) {
-                var dropZone = dropZones_1[_i];
-                dropZone.render();
-            }
+            // let dropZones=[
+            //     new DropZone(this, 200, 200, 50, "DOTCARD"),
+            //     new DropZone(this, 200, 350, 50, "DOTCARD"),
+            //     new DropZone(this, 300, 200, 50, "NUMBERTILE"),
+            //     new DropZone(this, 300, 300, 50, "NUMBERTILE"),
+            // ]
+            // for(let dropZone of dropZones){
+            //     dropZone.render()
+            // }
             // this.add.image(400, 400, "obstacle");
             // let manipulative=this.add.sprite(0, 0, 'manipulative')
             // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
             // let dropZone=new DropZone(this, 400, 400, 50, "BAR")
             // let bar=new Bar(this, 10, manipulative, dropZone);
             // bar.render(300, 300);
-            var dotCards = [
-                new dotcard_1.DotCard(_this, 3, [dropZones[0], dropZones[1]]),
-                new dotcard_1.DotCard(_this, 4, [dropZones[0], dropZones[1]])
-            ];
-            var numberTiles = [
-                new numbertile_1.NumberTile(_this, 3, [dropZones[2], dropZones[3]]),
-                new numbertile_1.NumberTile(_this, 4, [dropZones[2], dropZones[3]])
-            ];
-            for (var _a = 0, dotCards_1 = dotCards; _a < dotCards_1.length; _a++) {
-                var dotCard = dotCards_1[_a];
-                dotCard.dragSprite.setScale(0.5);
-            }
-            var y = 500;
-            var x = 100;
-            for (var _b = 0, dotCards_2 = dotCards; _b < dotCards_2.length; _b++) {
-                var dotCard = dotCards_2[_b];
-                dotCard.render(x, y);
-                x += 100;
-            }
-            for (var _c = 0, numberTiles_1 = numberTiles; _c < numberTiles_1.length; _c++) {
-                var numberTile = numberTiles_1[_c];
-                numberTile.render(x, y);
-                x += 100;
-            }
-            var narrationManager = new narrationmanager_1.NarrationManager(_this, ["pre_3", "plus", "post_9", "equals"]);
-            narrationManager.play(800);
+            // let dotCards=[
+            //     new DotCard(this, 3, [dropZones[0], dropZones[1]]),
+            //     new DotCard(this, 4, [dropZones[0], dropZones[1]])
+            // ];
+            // let numberTiles=[
+            //     new NumberTile(this, 3, [dropZones[2], dropZones[3]]),
+            //     new NumberTile(this, "plus_symbol", [dropZones[2], dropZones[3]])
+            // ];
+            // for(let dotCard of dotCards){
+            //     dotCard.dragSprite.setScale(0.5)
+            // }
+            // let y=500;
+            // let x=100;
+            // for(let dotCard of dotCards){
+            //     dotCard.render(x, y)
+            //     x+=100
+            // }
+            // for(let numberTile of numberTiles){
+            //     numberTile.render(x, y)
+            //     x+=100;
+            // }
+            // let narrationManager=new NarrationManager(this, ["pre_3", "plus", "post_9", "equals"])
+            // narrationManager.play(800)
+            var task = new task_1.Task(_this, 310030, 3, 1, true, "K", "OA", 2, 2, "Beginning Addition: Missing Result", "cards", 2, 7, [["1", "+", "2", "=", "3"]], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], [], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
+            task.render();
         };
         return _this;
     }
@@ -395,6 +390,29 @@ exports.DropZone = DropZone;
 //# sourceMappingURL=dropzone.js.map
 });
 
+;require.register("utils/manipulative/bar.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var manipulatives_1 = require("./manipulatives");
+var Bar = (function (_super) {
+    __extends(Bar, _super);
+    function Bar(theTargetScene, aValue, aResource, aDragPoint, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        return _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.BAR, aResource, aDragPoint) || this;
+    }
+    //bar specific rendering method
+    Bar.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return Bar;
+}(manipulatives_1.Manipulative));
+exports.Bar = Bar;
+//# sourceMappingURL=bar.js.map
+});
+
 ;require.register("utils/manipulative/dotcard.ts", function(exports, require, module) {
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
@@ -420,6 +438,19 @@ var DotCard = (function (_super) {
 }(manipulatives_1.Manipulative));
 exports.DotCard = DotCard;
 //# sourceMappingURL=dotcard.js.map
+});
+
+;require.register("utils/manipulative/index.ts", function(exports, require, module) {
+"use strict";
+var dotcard_1 = require("./dotcard");
+exports.DotCard = dotcard_1.DotCard;
+var bar_1 = require("./bar");
+exports.Bar = bar_1.Bar;
+var manipulatives_1 = require("./manipulatives");
+exports.Manipulative = manipulatives_1.Manipulative;
+var numbertile_1 = require("./numbertile");
+exports.NumberTile = numbertile_1.NumberTile;
+//# sourceMappingURL=index.js.map
 });
 
 ;require.register("utils/manipulative/manipulatives.ts", function(exports, require, module) {
@@ -456,7 +487,6 @@ var Manipulative = (function () {
             "dropMiss",
             "pickUp"
         ]);
-        console.log(this.soundManager);
     }
     Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
         var _this = this;
@@ -582,8 +612,17 @@ var NumberTile = (function (_super) {
     __extends(NumberTile, _super);
     function NumberTile(theTargetScene, aValue, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
         var _this = this;
+        var numberTile;
         var frame = aValue.toString();
-        var numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", frame + "_tex.png");
+        if (frame == "+") {
+            numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", "plus_symbol.png");
+        }
+        else if (frame == "=") {
+            numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", "equals_symbol.png");
+        }
+        else {
+            numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", frame + "_tex.png");
+        }
         // console.log(numberTile)
         _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.NUMBERTILE, numberTile, someDragPoints) || this;
         return _this;
@@ -596,35 +635,6 @@ var NumberTile = (function (_super) {
 }(manipulatives_1.Manipulative));
 exports.NumberTile = NumberTile;
 //# sourceMappingURL=numbertile.js.map
-});
-
-;require.register("utils/narrationmanager.ts", function(exports, require, module) {
-"use strict";
-var soundmanager_1 = require("./soundmanager");
-var NarrationManager = (function () {
-    function NarrationManager(aTargetScene, someSounds) {
-        this.sounds = someSounds;
-        this.targetScene = aTargetScene;
-        this.soundManager = new soundmanager_1.SoundManager(aTargetScene, someSounds);
-        // this.soundManager=Main.soundManager;
-    }
-    NarrationManager.prototype.play = function (delay) {
-        var _this = this;
-        var i = 0;
-        var howManyTimes = this.sounds.length;
-        var f = function () {
-            _this.soundManager.play(_this.sounds[i]);
-            i++;
-            if (i < howManyTimes) {
-                setTimeout(f, delay);
-            }
-        };
-        f();
-    };
-    return NarrationManager;
-}());
-exports.NarrationManager = NarrationManager;
-//# sourceMappingURL=narrationmanager.js.map
 });
 
 ;require.register("utils/scalemanager.ts", function(exports, require, module) {
@@ -718,6 +728,72 @@ var SoundManager = (function () {
 }());
 exports.SoundManager = SoundManager;
 //# sourceMappingURL=soundmanager.js.map
+});
+
+;require.register("utils/task/task.ts", function(exports, require, module) {
+"use strict";
+var manipulative_1 = require("../manipulative");
+var dropzone_1 = require("../dropzone");
+var Task = (function () {
+    function Task(aTargetScene, taskID, levelNum, subLevel, active, CCSSgrade, CCSSdomain, CCSSstandard, wayOfKnowing, subSkill, representation, diffLevel, taskType, taskArray, directionsArray, displayArray, audReqArray, sliderContents, sliderType, randomSlider, requiredSolutions, wp, wpBritish, wpSpanish, endPoints, steps, displayPoints, barType, notices, displayGrid, orient) {
+        this.targetScene = aTargetScene;
+        this.manipulativeArray = [];
+        this.taskID = taskID;
+        this.levelNum = levelNum;
+        this.subLevel = subLevel;
+        this.active = active;
+        this.CCSSgrade = CCSSgrade;
+        this.CCSSdomain = CCSSdomain;
+        this.CCSSstandard = CCSSstandard;
+        this.wayOfKnowing = wayOfKnowing;
+        this.subSkill = subSkill;
+        this.representation = representation;
+        this.diffLevel = diffLevel;
+        this.taskType = taskType;
+        this.taskArray = taskArray;
+        this.directionsArray = directionsArray;
+        this.displayArray = displayArray;
+        this.audReqArray = audReqArray;
+        this.sliderContents = sliderContents;
+        this.sliderType = sliderType;
+        this.randomSlider = randomSlider;
+        this.requiredSolutions = requiredSolutions;
+        this.wp = wp;
+        this.wpBritish = wpBritish;
+        this.wpSpanish = wpSpanish;
+        this.endPoints = endPoints;
+        this.steps = steps;
+        this.displayPoints = displayPoints;
+        this.barType = barType;
+        this.notices = notices;
+        this.displayGrid = displayGrid;
+        this.orient = orient;
+    }
+    Task.prototype.addDropZone = function (manipulativeIndex, dropZone) {
+        this.manipulativeArray[manipulativeIndex].dragSprite.visible = false;
+        var x = this.manipulativeArray[manipulativeIndex].originalX;
+        var y = this.manipulativeArray[manipulativeIndex].originalY;
+        dropZone.x = x;
+        dropZone.y = y;
+        dropZone.render();
+        return dropZone;
+    };
+    Task.prototype.render = function () {
+        console.log(this.displayArray[1]["numbers"]);
+        var y = 400;
+        for (var i = 0; i < this.taskArray.length; i++) {
+            for (var j = 0; j < this.taskArray[i].length; j++) {
+                var numberTile = new manipulative_1.NumberTile(this.targetScene, this.taskArray[i][j], []);
+                this.manipulativeArray.push(numberTile);
+                numberTile.render((75 * (j + 1)) + 250, y);
+            }
+        }
+        this.addDropZone(this.displayArray[1]["numbers"][0], new dropzone_1.DropZone(this.targetScene, 500, 500, 50, "NUMBERTILE"));
+    };
+    return Task;
+}());
+exports.Task = Task;
+//# sourceMappingURL=task.js.map
 });
 
 ;require.register("___globals___", function(exports, require, module) {

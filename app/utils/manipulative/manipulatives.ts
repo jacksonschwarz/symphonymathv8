@@ -4,7 +4,7 @@ import {DropZone} from "../dropzone";
 import {Main} from "../../scenes/default";
 export class Manipulative{
     targetScene:any;
-    value:number;
+    value:number | string;
     type: ManipulativeType | string;
     resourceKey:string;
     onClick:()=>void;
@@ -22,7 +22,7 @@ export class Manipulative{
 
     constructor(
         theTargetScene:any,
-        aValue:number,
+        aValue:number | string,
         aType:ManipulativeType | string,
         // aResource:string,
         aSprite:any,
@@ -60,7 +60,6 @@ export class Manipulative{
             "dropMiss",
             "pickUp"
         ])
-        console.log(this.soundManager);
         
 
     }

@@ -8,6 +8,9 @@ import {Background} from "../utils/background";
 
 import {NarrationManager} from "../utils/narrationmanager";
 import {SoundManager} from "../utils/soundmanager";
+
+import{Task} from "../utils/task/task";
+
 export class TestSpace extends Phaser.Scene{
 
     constructor(){
@@ -36,16 +39,16 @@ export class TestSpace extends Phaser.Scene{
     }
     create=()=>{
         let bg=new Background(this, "plains");
-        let dropZones=[
-            new DropZone(this, 200, 200, 50, "DOTCARD"),
-            new DropZone(this, 200, 350, 50, "DOTCARD"),
-            new DropZone(this, 300, 200, 50, "NUMBERTILE"),
-            new DropZone(this, 300, 300, 50, "NUMBERTILE"),
+        // let dropZones=[
+        //     new DropZone(this, 200, 200, 50, "DOTCARD"),
+        //     new DropZone(this, 200, 350, 50, "DOTCARD"),
+        //     new DropZone(this, 300, 200, 50, "NUMBERTILE"),
+        //     new DropZone(this, 300, 300, 50, "NUMBERTILE"),
             
-        ]
-        for(let dropZone of dropZones){
-            dropZone.render()
-        }
+        // ]
+        // for(let dropZone of dropZones){
+        //     dropZone.render()
+        // }
     
         // this.add.image(400, 400, "obstacle");
         // let manipulative=this.add.sprite(0, 0, 'manipulative')
@@ -58,31 +61,64 @@ export class TestSpace extends Phaser.Scene{
 
 
 
-        let dotCards=[
-            new DotCard(this, 3, [dropZones[0], dropZones[1]]),
-            new DotCard(this, 4, [dropZones[0], dropZones[1]])
-        ];
+        // let dotCards=[
+        //     new DotCard(this, 3, [dropZones[0], dropZones[1]]),
+        //     new DotCard(this, 4, [dropZones[0], dropZones[1]])
+        // ];
 
-        let numberTiles=[
-            new NumberTile(this, 3, [dropZones[2], dropZones[3]]),
-            new NumberTile(this, 4, [dropZones[2], dropZones[3]])
-        ];
-        for(let dotCard of dotCards){
-            dotCard.dragSprite.setScale(0.5)
-        }
-        let y=500;
-        let x=100;
-        for(let dotCard of dotCards){
-            dotCard.render(x, y)
-            x+=100
-        }
-        for(let numberTile of numberTiles){
-            numberTile.render(x, y)
-            x+=100;
-        }
-        let narrationManager=new NarrationManager(this, ["pre_3", "plus", "post_9", "equals"])
-        narrationManager.play(800)
+        // let numberTiles=[
+        //     new NumberTile(this, 3, [dropZones[2], dropZones[3]]),
+        //     new NumberTile(this, "plus_symbol", [dropZones[2], dropZones[3]])
+        // ];
+        // for(let dotCard of dotCards){
+        //     dotCard.dragSprite.setScale(0.5)
+        // }
+        // let y=500;
+        // let x=100;
+        // for(let dotCard of dotCards){
+        //     dotCard.render(x, y)
+        //     x+=100
+        // }
+        // for(let numberTile of numberTiles){
+        //     numberTile.render(x, y)
+        //     x+=100;
+        // }
+        // let narrationManager=new NarrationManager(this, ["pre_3", "plus", "post_9", "equals"])
+        // narrationManager.play(800)
 
-
+        let task=new Task(
+            this, 
+            310030,
+            3,
+            1,
+            true,
+            "K",
+            "OA",
+            2,
+            2,
+            "Beginning Addition: Missing Result",
+            "cards",
+            2,
+            7,
+            [["1","+","2","=","3"]],
+            ["matchCards"],
+            [{"cards":[0,2,4]},{"numbers":[4]}],
+            [],
+            ["0","1","2","3","4","5","6","7","8","9"],
+            "cardsnumbers",
+            false,
+            "3",
+            null,
+            "",
+            "",
+            [""],
+            0,
+            "all",
+            "0",
+            {"cardsnumbers":"3_1"},
+            "none",
+            "h"
+        )
+        task.render()
     }
 }
