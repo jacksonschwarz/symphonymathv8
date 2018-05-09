@@ -34,8 +34,8 @@ export class TestSpace extends Phaser.Scene{
         this.load.audio("pre_3", "audio/english/pre_3.mp3", null, null);
         this.load.audio("plus", "audio/english/plus.mp3", null, null);        
         this.load.audio("equals", "audio/english/equals.mp3", null, null);
-        this.load.audio("post_9", "audio/english/post_9.mp3", null, null);
-        this.load.audio("pre_12", "audio/english/pre_12.mp3", null, null);
+        this.load.audio("post_4", "audio/english/post_4.mp3", null, null);
+        this.load.audio("pre_7", "audio/english/pre_7.mp3", null, null);
 
     }
     create=()=>{
@@ -102,12 +102,12 @@ export class TestSpace extends Phaser.Scene{
             2,
             7,
             [
-                ["3", "+", "9", "=", "12"],
-                ["3","+","9","=","12"]
+                ["3", "+", "4", "=", "7"],
+                ["3","+","4","=","7"]
             ],
             ["matchCards"],
             [{"cards":[0,2,4]},{"numbers":[4]}],
-            ["pre_3", "plus", "post_9", "equals"],
+            ["pre_3", "plus", "post_4", "equals"],
             ["0","1","2","3","4","5","6","7","8","9"],
             "cardsnumbers",
             false,

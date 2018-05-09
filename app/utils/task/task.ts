@@ -177,6 +177,5 @@ export class Task{
             }
         }
         this.narrationManager.play(800)
-        
     }
 }  

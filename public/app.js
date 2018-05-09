@@ -269,8 +269,8 @@ var TestSpace = (function (_super) {
             _this.load.audio("pre_3", "audio/english/pre_3.mp3", null, null);
             _this.load.audio("plus", "audio/english/plus.mp3", null, null);
             _this.load.audio("equals", "audio/english/equals.mp3", null, null);
-            _this.load.audio("post_9", "audio/english/post_9.mp3", null, null);
-            _this.load.audio("pre_12", "audio/english/pre_12.mp3", null, null);
+            _this.load.audio("post_4", "audio/english/post_4.mp3", null, null);
+            _this.load.audio("pre_7", "audio/english/pre_7.mp3", null, null);
         };
         _this.create = function () {
             var bg = new background_1.Background(_this, "plains");
@@ -313,9 +313,9 @@ var TestSpace = (function (_super) {
             // let narrationManager=new NarrationManager(this, ["pre_3", "plus", "post_9", "equals"])
             // narrationManager.play(800)
             var task = new task_1.Task(_this, 310030, 3, 1, true, "K", "OA", 2, 2, "Beginning Addition: Missing Result", "cards", 2, 7, [
-                ["3", "+", "9", "=", "12"],
-                ["3", "+", "9", "=", "12"]
-            ], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], ["pre_3", "plus", "post_9", "equals"], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
+                ["3", "+", "4", "=", "7"],
+                ["3", "+", "4", "=", "7"]
+            ], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], ["pre_3", "plus", "post_4", "equals"], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
             task.render();
             new numbertile_1.NumberTile(_this, 2, task.dropZones).render(750, 750);
             new button_1.Button(500, 450, _this.add.sprite(0, 0, "menu", "CheckBtn.png"), _this, function () {
