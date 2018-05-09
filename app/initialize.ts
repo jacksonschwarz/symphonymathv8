@@ -45,9 +45,9 @@ const game = new Phaser.Game(<any>{ // <any> works around the missing GameConfig
   // backgroundColor: 0x000000, // black
   loader: {
     // baseURL: '',
-    path: 'assets/',
+    path: 'http://content.symphonylearning.com/assets/',
     maxParallelDownloads: 6,
-    // crossOrigin: 'anonymous',
+    crossOrigin: 'anonymous',
     // timeout: 0
   },
   physics: {

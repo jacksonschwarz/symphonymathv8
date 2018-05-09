@@ -7,6 +7,7 @@ export class Manipulative{
     value:number | string;
     type: ManipulativeType | string;
     resourceKey:string;
+    isInteractive:boolean=true;
     onClick:()=>void;
     onPointerDown:()=>void;
     onPointerOver:()=>void;
@@ -155,6 +156,9 @@ export class Manipulative{
         //     this.dragSprite.setScale(this.originalScale);
         // })
     }
+    setInteractive(interactiveBool:boolean){
+        this.isInteractive=interactiveBool;
+    }
     render(x, y, scale?){
         this.originalX=x;
         this.originalY=y;
@@ -168,8 +172,11 @@ export class Manipulative{
         // this.dropHit=this.targetScene.sound.add("dropHit");
         // this.dropMiss=this.targetScene.sound.add("dropMiss");
         let isDragging=false;
-        this.clickAndFollow(this.dragSprite,x,y);
-        this.activateOnMouseOver();
+        if(this.isInteractive){
+            this.clickAndFollow(this.dragSprite,x,y);
+            this.activateOnMouseOver();
+        }
+
     }
 
 }

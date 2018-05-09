@@ -194,8 +194,9 @@ var game = new Phaser.Game({
     // backgroundColor: 0x000000, // black
     loader: {
         // baseURL: '',
-        path: 'assets/',
+        path: 'http://content.symphonylearning.com/assets/',
         maxParallelDownloads: 6,
+        crossOrigin: 'anonymous',
     },
     physics: {
         default: 'arcade',
@@ -244,7 +245,9 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var numbertile_1 = require("../utils/manipulative/numbertile");
 var background_1 = require("../utils/background");
+var button_1 = require("../utils/button");
 var task_1 = require("../utils/task/task");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
@@ -253,21 +256,21 @@ var TestSpace = (function (_super) {
             key: "TestSpace"
         }) || this;
         _this.preload = function () {
-            _this.load.audio("dropHit", "sounds/dropHit.mp3", null, null);
-            _this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null);
-            _this.load.audio("pickUp", "sounds/pickUp.mp3", null, null);
-            _this.load.audio("plus", "sounds/plus.mp3", null, null);
-            _this.load.audio("pre_3", "sounds/pre_3.mp3", null, null);
-            _this.load.audio("post_9", "sounds/post_9.mp3", null, null);
-            _this.load.audio("post_10", "sounds/pre_10.mp3", null, null);
-            _this.load.audio("equals", "sounds/equals.mp3", null, null);
-            _this.load.image("obstacle", "obstacle.png");
-            _this.load.image("manipulative", "test_manipulative.png");
-            _this.load.image("dropzone", "dropzone.png");
-            _this.load.image("plains", "plain 2.jpg");
-            _this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json");
-            _this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json");
-            _this.load.atlas("numbertiles", "atlas/numberTiles.png", "atlas/numberTiles.json");
+            _this.load.image("obstacle", "img/obstacle.png");
+            _this.load.image("manipulative", "img/test_manipulative.png");
+            _this.load.image("dropzone", "img/dropzone.png");
+            _this.load.image("plains", "img/plain 2.jpg");
+            _this.load.atlas("dotcards", "img/atlas/dotCards.png", "img/atlas/dotCards.json");
+            _this.load.atlas("numbertiles", "img/atlas/numberTiles.png", "img/atlas/numberTiles.json");
+            _this.load.atlas("menu", "img/atlas/topBarAndButtons.png", "img/atlas/topBarAndButtons.json");
+            _this.load.audio("dropHit", "audio/sfx/dropHit.mp3", null, null);
+            _this.load.audio("dropMiss", "audio/sfx/dropMiss.mp3", null, null);
+            _this.load.audio("pickUp", "audio/sfx/pickUp.mp3", null, null);
+            _this.load.audio("pre_3", "audio/english/pre_3.mp3", null, null);
+            _this.load.audio("plus", "audio/english/plus.mp3", null, null);
+            _this.load.audio("equals", "audio/english/equals.mp3", null, null);
+            _this.load.audio("post_9", "audio/english/post_9.mp3", null, null);
+            _this.load.audio("pre_12", "audio/english/pre_12.mp3", null, null);
         };
         _this.create = function () {
             var bg = new background_1.Background(_this, "plains");
@@ -309,8 +312,15 @@ var TestSpace = (function (_super) {
             // }
             // let narrationManager=new NarrationManager(this, ["pre_3", "plus", "post_9", "equals"])
             // narrationManager.play(800)
-            var task = new task_1.Task(_this, 310030, 3, 1, true, "K", "OA", 2, 2, "Beginning Addition: Missing Result", "cards", 2, 7, [["1", "+", "2", "=", "3"]], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], [], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
+            var task = new task_1.Task(_this, 310030, 3, 1, true, "K", "OA", 2, 2, "Beginning Addition: Missing Result", "cards", 2, 7, [
+                ["3", "+", "9", "=", "12"],
+                ["3", "+", "9", "=", "12"]
+            ], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], ["pre_3", "plus", "post_9", "equals"], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
             task.render();
+            new numbertile_1.NumberTile(_this, 2, task.dropZones).render(750, 750);
+            new button_1.Button(500, 450, _this.add.sprite(0, 0, "menu", "CheckBtn.png"), _this, function () {
+                console.log("CLICKED!");
+            }).render();
         };
         return _this;
     }
@@ -331,6 +341,40 @@ var Background = (function () {
 }());
 exports.Background = Background;
 //# sourceMappingURL=background.js.map
+});
+
+;require.register("utils/button.ts", function(exports, require, module) {
+"use strict";
+var Button = (function () {
+    function Button(anX, aY, aResource, aTargetScene, clickCallback) {
+        this.x = anX;
+        this.y = aY;
+        this.resource = aResource;
+        this.targetScene = aTargetScene;
+        this.onClick = clickCallback;
+        this.resource.visible = false;
+    }
+    ;
+    Button.prototype.render = function () {
+        var _this = this;
+        this.resource.visible = true;
+        this.resource.x = this.x;
+        this.resource.y = this.y;
+        this.resource.setInteractive();
+        this.resource.on("pointerover", function () {
+            _this.resource.setTint(0xBEBEBE);
+        });
+        this.resource.on("pointerout", function () {
+            _this.resource.clearTint();
+        });
+        this.resource.on("pointerup", function () {
+            _this.onClick();
+        });
+    };
+    return Button;
+}());
+exports.Button = Button;
+//# sourceMappingURL=button.js.map
 });
 
 ;require.register("utils/dropzone.ts", function(exports, require, module) {
@@ -460,6 +504,7 @@ var Manipulative = (function () {
     function Manipulative(theTargetScene, aValue, aType, 
         // aResource:string,
         aSprite, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
+        this.isInteractive = true;
         this.isDragging = false;
         this.startDragMS = 0;
         this.minDragDelay = 200;
@@ -572,6 +617,9 @@ var Manipulative = (function () {
         //     this.dragSprite.setScale(this.originalScale);
         // })
     };
+    Manipulative.prototype.setInteractive = function (interactiveBool) {
+        this.isInteractive = interactiveBool;
+    };
     Manipulative.prototype.render = function (x, y, scale) {
         this.originalX = x;
         this.originalY = y;
@@ -585,8 +633,10 @@ var Manipulative = (function () {
         // this.dropHit=this.targetScene.sound.add("dropHit");
         // this.dropMiss=this.targetScene.sound.add("dropMiss");
         var isDragging = false;
-        this.clickAndFollow(this.dragSprite, x, y);
-        this.activateOnMouseOver();
+        if (this.isInteractive) {
+            this.clickAndFollow(this.dragSprite, x, y);
+            this.activateOnMouseOver();
+        }
     };
     return Manipulative;
 }());
@@ -635,6 +685,35 @@ var NumberTile = (function (_super) {
 }(manipulatives_1.Manipulative));
 exports.NumberTile = NumberTile;
 //# sourceMappingURL=numbertile.js.map
+});
+
+;require.register("utils/narrationmanager.ts", function(exports, require, module) {
+"use strict";
+var soundmanager_1 = require("./soundmanager");
+var NarrationManager = (function () {
+    function NarrationManager(aTargetScene, someSounds) {
+        this.sounds = someSounds;
+        this.targetScene = aTargetScene;
+        this.soundManager = new soundmanager_1.SoundManager(aTargetScene, someSounds);
+        // this.soundManager=Main.soundManager;
+    }
+    NarrationManager.prototype.play = function (delay) {
+        var _this = this;
+        var i = 0;
+        var howManyTimes = this.sounds.length;
+        var f = function () {
+            _this.soundManager.play(_this.sounds[i]);
+            i++;
+            if (i < howManyTimes) {
+                setTimeout(f, delay);
+            }
+        };
+        f();
+    };
+    return NarrationManager;
+}());
+exports.NarrationManager = NarrationManager;
+//# sourceMappingURL=narrationmanager.js.map
 });
 
 ;require.register("utils/scalemanager.ts", function(exports, require, module) {
@@ -734,10 +813,19 @@ exports.SoundManager = SoundManager;
 "use strict";
 var manipulative_1 = require("../manipulative");
 var dropzone_1 = require("../dropzone");
+var narrationmanager_1 = require("../narrationmanager");
 var Task = (function () {
     function Task(aTargetScene, taskID, levelNum, subLevel, active, CCSSgrade, CCSSdomain, CCSSstandard, wayOfKnowing, subSkill, representation, diffLevel, taskType, taskArray, directionsArray, displayArray, audReqArray, sliderContents, sliderType, randomSlider, requiredSolutions, wp, wpBritish, wpSpanish, endPoints, steps, displayPoints, barType, notices, displayGrid, orient) {
+        this.manipulativeArray = {
+            "cards": [],
+            "numbers": []
+        };
         this.targetScene = aTargetScene;
-        this.manipulativeArray = [];
+        this.manipulativeArray = {
+            "numbers": [],
+            "cards": []
+        };
+        this.dropZones = [];
         this.taskID = taskID;
         this.levelNum = levelNum;
         this.subLevel = subLevel;
@@ -754,6 +842,7 @@ var Task = (function () {
         this.directionsArray = directionsArray;
         this.displayArray = displayArray;
         this.audReqArray = audReqArray;
+        this.narrationManager = new narrationmanager_1.NarrationManager(this.targetScene, audReqArray);
         this.sliderContents = sliderContents;
         this.sliderType = sliderType;
         this.randomSlider = randomSlider;
@@ -769,26 +858,63 @@ var Task = (function () {
         this.displayGrid = displayGrid;
         this.orient = orient;
     }
-    Task.prototype.addDropZone = function (manipulativeIndex, dropZone) {
-        this.manipulativeArray[manipulativeIndex].dragSprite.visible = false;
-        var x = this.manipulativeArray[manipulativeIndex].originalX;
-        var y = this.manipulativeArray[manipulativeIndex].originalY;
-        dropZone.x = x;
-        dropZone.y = y;
-        dropZone.render();
-        return dropZone;
+    Task.prototype.addDropZone = function (manipulativeType, manipulativeIndex, dropZone) {
+        if (this.manipulativeArray[manipulativeType].length > 0) {
+            console.log(this.manipulativeArray[manipulativeType][manipulativeIndex]);
+            this.manipulativeArray[manipulativeType][manipulativeIndex].dragSprite.visible = false;
+            var x = this.manipulativeArray[manipulativeType][manipulativeIndex].originalX;
+            var y = this.manipulativeArray[manipulativeType][manipulativeIndex].originalY;
+            dropZone.x = x;
+            dropZone.y = y;
+            dropZone.render();
+            this.dropZones.push(dropZone);
+        }
     };
     Task.prototype.render = function () {
-        console.log(this.displayArray[1]["numbers"]);
-        var y = 400;
+        var y = 300;
+        //i will be the same as the row of the actual task when displaying. In the test case, row 0 will be cards, because displayArray[i] has the key "cards"
         for (var i = 0; i < this.taskArray.length; i++) {
+            var type = "";
+            switch (Object.keys(this.displayArray[i])[0]) {
+                case "cards":
+                    type = "DOTCARD";
+                    break;
+                case "numbers":
+                    type = "NUMBERTILE";
+                    break;
+                default:
+                    break;
+            }
             for (var j = 0; j < this.taskArray[i].length; j++) {
-                var numberTile = new manipulative_1.NumberTile(this.targetScene, this.taskArray[i][j], []);
-                this.manipulativeArray.push(numberTile);
-                numberTile.render((75 * (j + 1)) + 250, y);
+                switch (type) {
+                    case "DOTCARD":
+                        var dotCard = new manipulative_1.NumberTile(this.targetScene, this.taskArray[i][j], []);
+                        dotCard.setInteractive(false);
+                        this.manipulativeArray["cards"].push(dotCard);
+                        dotCard.render((75 * (j + 1)) + 250, (75 * (i + 1)) + 100);
+                        break;
+                    case "NUMBERTILE":
+                        var numberTile = new manipulative_1.NumberTile(this.targetScene, this.taskArray[i][j], []);
+                        numberTile.setInteractive(false);
+                        this.manipulativeArray["numbers"].push(numberTile);
+                        numberTile.render((75 * (j + 1)) + 250, (100 * (i + 1)) + 100);
+                        break;
+                }
             }
         }
-        this.addDropZone(this.displayArray[1]["numbers"][0], new dropzone_1.DropZone(this.targetScene, 500, 500, 50, "NUMBERTILE"));
+        for (var i = 0; i < this.displayArray.length; i++) {
+            if (Object.keys(this.displayArray[i])[0] == "cards") {
+                for (var j = 0; j < this.displayArray[i]["cards"].length; j++) {
+                    this.addDropZone("cards", this.displayArray[i]["cards"][j], new dropzone_1.DropZone(this.targetScene, 0, 0, 0, "DOTCARD"));
+                }
+            }
+            else if (Object.keys(this.displayArray[i])[0] == "numbers") {
+                for (var j = 0; j < this.displayArray[i]["numbers"].length; j++) {
+                    this.addDropZone("numbers", this.displayArray[i]["numbers"][j], new dropzone_1.DropZone(this.targetScene, 0, 0, 0, "NUMBERTILE"));
+                }
+            }
+        }
+        this.narrationManager.play(800);
     };
     return Task;
 }());

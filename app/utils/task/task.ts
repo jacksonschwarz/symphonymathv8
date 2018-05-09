@@ -1,9 +1,15 @@
 import {Manipulative, DotCard, NumberTile} from "../manipulative" 
 
 import {DropZone} from "../dropzone";
+import {NarrationManager} from "../narrationmanager";
 export class Task{
     targetScene:any;
-    manipulativeArray:Manipulative[];
+    manipulativeArray={
+        "cards":[],
+        "numbers":[]
+     };
+    dropZones:DropZone[];
+    narrationManager:NarrationManager;
 
     taskID:number;
     levelNum:number;
@@ -70,7 +76,11 @@ export class Task{
         orient:string
     ){
         this.targetScene=aTargetScene;
-        this.manipulativeArray=[];
+        this.manipulativeArray={
+            "numbers":[],
+            "cards":[]
+        };
+        this.dropZones=[];
 
         this.taskID=taskID;
         this.levelNum=levelNum;
@@ -88,6 +98,9 @@ export class Task{
         this.directionsArray=directionsArray;
         this.displayArray=displayArray;
         this.audReqArray=audReqArray;
+
+        this.narrationManager=new NarrationManager(this.targetScene, audReqArray);
+
         this.sliderContents=sliderContents;
         this.sliderType=sliderType;
         this.randomSlider=randomSlider;
@@ -103,27 +116,67 @@ export class Task{
         this.displayGrid=displayGrid;
         this.orient=orient;
     }
-    private addDropZone(manipulativeIndex:number, dropZone:DropZone){
-        this.manipulativeArray[manipulativeIndex].dragSprite.visible=false
-        let x=this.manipulativeArray[manipulativeIndex].originalX
-        let y=this.manipulativeArray[manipulativeIndex].originalY
-        dropZone.x=x;
-        dropZone.y=y;
-        dropZone.render()
-        return dropZone;
-    }
-    render(){
-        console.log(this.displayArray[1]["numbers"])
-        let y=400;
-        for(let i=0;i<this.taskArray.length;i++){
-            for(let j=0;j<this.taskArray[i].length;j++){
-                let numberTile=new NumberTile(this.targetScene, this.taskArray[i][j], [])
-                this.manipulativeArray.push(numberTile)
-                numberTile.render((75*(j+1))+250, y)
-            }
+    addDropZone(manipulativeType:string, manipulativeIndex:number, dropZone:DropZone){
+
+        if(this.manipulativeArray[manipulativeType].length > 0){
+            console.log(this.manipulativeArray[manipulativeType][manipulativeIndex]);
+            this.manipulativeArray[manipulativeType][manipulativeIndex].dragSprite.visible=false
+            let x=this.manipulativeArray[manipulativeType][manipulativeIndex].originalX
+            let y=this.manipulativeArray[manipulativeType][manipulativeIndex].originalY
+            dropZone.x=x;
+            dropZone.y=y;
+            dropZone.render()
+            this.dropZones.push(dropZone);
         }
 
-        this.addDropZone(this.displayArray[1]["numbers"][0], new DropZone(this.targetScene, 500, 500, 50, "NUMBERTILE"))
+
+    }
+    render(){
+        let y=300;
+        //i will be the same as the row of the actual task when displaying. In the test case, row 0 will be cards, because displayArray[i] has the key "cards"
+        for(let i=0;i<this.taskArray.length;i++){
+            let type="";
+            switch(Object.keys(this.displayArray[i])[0]){
+                case "cards":
+                    type="DOTCARD"
+                    break;
+                case "numbers":
+                    type="NUMBERTILE"
+                    break;
+                default:
+                    break;
+            }
+            for(let j=0;j<this.taskArray[i].length;j++){
+                switch(type){
+                    case "DOTCARD":
+                        let dotCard=new NumberTile(this.targetScene, this.taskArray[i][j], [])
+                        dotCard.setInteractive(false);
+                        this.manipulativeArray["cards"].push(dotCard)
+                        dotCard.render((75*(j+1))+250, (75*(i+1))+100)
+                        break;
+                    case "NUMBERTILE":
+                        let numberTile=new NumberTile(this.targetScene, this.taskArray[i][j], [])
+                        numberTile.setInteractive(false);
+                        this.manipulativeArray["numbers"].push(numberTile)
+                        numberTile.render((75*(j+1))+250, (100*(i+1))+100)
+                        break;
+                }
+
+            }
+        }
+        for(let i=0;i<this.displayArray.length;i++){
+            if(Object.keys(this.displayArray[i])[0] == "cards"){
+                for(let j=0;j<this.displayArray[i]["cards"].length;j++){
+                    this.addDropZone("cards",this.displayArray[i]["cards"][j], new DropZone(this.targetScene, 0, 0, 0, "DOTCARD"))
+                }
+            }
+            else if(Object.keys(this.displayArray[i])[0] == "numbers"){
+                for(let j=0;j<this.displayArray[i]["numbers"].length;j++){
+                    this.addDropZone("numbers",this.displayArray[i]["numbers"][j], new DropZone(this.targetScene, 0, 0, 0, "NUMBERTILE"))
+                }
+            }
+        }
+        this.narrationManager.play(800)
         
     }
 }  

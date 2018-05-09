@@ -8,6 +8,7 @@ import {Background} from "../utils/background";
 
 import {NarrationManager} from "../utils/narrationmanager";
 import {SoundManager} from "../utils/soundmanager";
+import {Button} from "../utils/button";
 
 import{Task} from "../utils/task/task";
 
@@ -19,22 +20,22 @@ export class TestSpace extends Phaser.Scene{
         })
     }
     preload=()=>{
-        this.load.audio("dropHit", "sounds/dropHit.mp3", null, null)
-        this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null)
-        this.load.audio("pickUp", "sounds/pickUp.mp3", null, null)
-    
-        this.load.audio("plus", "sounds/plus.mp3", null, null)
-        this.load.audio("pre_3", "sounds/pre_3.mp3", null, null)
-        this.load.audio("post_9", "sounds/post_9.mp3", null, null)
-        this.load.audio("post_10", "sounds/pre_10.mp3", null, null)
-        this.load.audio("equals", "sounds/equals.mp3", null, null)
-        this.load.image("obstacle", "obstacle.png")
-        this.load.image("manipulative", "test_manipulative.png");
-        this.load.image("dropzone", "dropzone.png")
-        this.load.image("plains", "plain 2.jpg")
-        this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json")
-        this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json")
-        this.load.atlas("numbertiles", "atlas/numberTiles.png", "atlas/numberTiles.json")
+        this.load.image("obstacle", "img/obstacle.png")
+        this.load.image("manipulative", "img/test_manipulative.png");
+        this.load.image("dropzone", "img/dropzone.png")
+        this.load.image("plains", "img/plain 2.jpg")
+        this.load.atlas("dotcards", "img/atlas/dotCards.png", "img/atlas/dotCards.json")
+        this.load.atlas("numbertiles", "img/atlas/numberTiles.png", "img/atlas/numberTiles.json")
+        this.load.atlas("menu", "img/atlas/topBarAndButtons.png", "img/atlas/topBarAndButtons.json")
+        this.load.audio("dropHit", "audio/sfx/dropHit.mp3", null, null)
+        this.load.audio("dropMiss", "audio/sfx/dropMiss.mp3", null, null)
+        this.load.audio("pickUp", "audio/sfx/pickUp.mp3", null, null)
+
+        this.load.audio("pre_3", "audio/english/pre_3.mp3", null, null);
+        this.load.audio("plus", "audio/english/plus.mp3", null, null);        
+        this.load.audio("equals", "audio/english/equals.mp3", null, null);
+        this.load.audio("post_9", "audio/english/post_9.mp3", null, null);
+        this.load.audio("pre_12", "audio/english/pre_12.mp3", null, null);
 
     }
     create=()=>{
@@ -100,10 +101,13 @@ export class TestSpace extends Phaser.Scene{
             "cards",
             2,
             7,
-            [["1","+","2","=","3"]],
+            [
+                ["3", "+", "9", "=", "12"],
+                ["3","+","9","=","12"]
+            ],
             ["matchCards"],
             [{"cards":[0,2,4]},{"numbers":[4]}],
-            [],
+            ["pre_3", "plus", "post_9", "equals"],
             ["0","1","2","3","4","5","6","7","8","9"],
             "cardsnumbers",
             false,
@@ -120,5 +124,10 @@ export class TestSpace extends Phaser.Scene{
             "h"
         )
         task.render()
+        
+        new NumberTile(this, 2, task.dropZones).render(750, 750);
+        new Button(500, 450, this.add.sprite(0, 0, "menu", "CheckBtn.png"), this, ()=>{
+            console.log("CLICKED!");
+        }).render()
     }
 }
