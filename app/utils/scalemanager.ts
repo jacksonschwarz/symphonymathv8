@@ -39,8 +39,7 @@ export class ScaleManager {
         var orientation = "50% 50%";
         var scale = Math.min(window.innerWidth / this.canvas.width, window.innerHeight / this.canvas.height);
         var usedHeight = this.canvas.height*scale;
-
-        document.body.height = window.innerHeight;
+        //document.body.height = window.innerHeight;
 
         this.canvas.setAttribute('style', '-ms-transform-origin: ' + orientation + '; -webkit-transform-origin: ' + orientation + ';' +
             ' -moz-transform-origin: ' + orientation + '; -o-transform-origin: ' + orientation + '; transform-origin: ' + orientation + ';' +
