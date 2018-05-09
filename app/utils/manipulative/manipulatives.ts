@@ -1,6 +1,7 @@
 import {SoundManager} from "../soundmanager";
 import {DropZone} from "../dropzone";
 
+import {Main} from "../../scenes/default";
 export class Manipulative{
     targetScene:any;
     value:number;
@@ -54,7 +55,13 @@ export class Manipulative{
         this.dragSprite.visible=false;
         
 
-        this.soundManager=new SoundManager(this.targetScene, ["pickUp", "dropHit", "dropMiss"])
+        this.soundManager=new SoundManager(this.targetScene, [
+            "dropHit",
+            "dropMiss",
+            "pickUp"
+        ])
+        console.log(this.soundManager);
+        
 
     }
  

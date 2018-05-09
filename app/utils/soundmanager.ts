@@ -1,3 +1,4 @@
+
 export class SoundManager{
     //phaser scene
     targetScene:any;
@@ -8,10 +9,11 @@ export class SoundManager{
     constructor(aTargetScene:any, someSoundKeys:string[]){
         this.targetScene=aTargetScene;
         this.soundKeys=someSoundKeys;
+
+        aTargetScene.load.audio("pre_3", "sounds/pre_3.mp3")
         for(let i=0;i<someSoundKeys.length;i++){
-            //aTargetScene.load.audio(someSoundKeys[i], `sounds/${someSoundKeys[i]}.mp3`);
-            this.sounds.push(aTargetScene.sound.add(someSoundKeys[i]));
-            
+            let sound=this.targetScene.sound.add(someSoundKeys[i])
+            this.sounds.push(sound);
         }
         aTargetScene.load.once('filecomplete', this.doneLoad);
     }
@@ -25,6 +27,5 @@ export class SoundManager{
         } else {
             console.log('audio not found:',sound);
         }
-        
     }
 }

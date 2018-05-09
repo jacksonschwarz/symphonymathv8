@@ -1,1 +1,728 @@
-!function(){"use strict";var t="undefined"==typeof global?self:global;if("function"!=typeof t.require){var e={},i={},n={},r={}.hasOwnProperty,a=/^\.\.?(\/|$)/,s=function(t,e){for(var i,n=[],r=(a.test(e)?t+"/"+e:e).split("/"),s=0,o=r.length;s<o;s++)i=r[s],".."===i?n.pop():"."!==i&&""!==i&&n.push(i);return n.join("/")},o=function(t){return t.split("/").slice(0,-1).join("/")},c=function(e){return function(i){var n=s(o(e),i);return t.require(n,e)}},p=function(t,e){var n=y&&y.createHot(t),r={id:t,exports:{},hot:n};return i[t]=r,e(r.exports,c(t),r),r.exports},l=function(t){return n[t]?l(n[t]):t},u=function(t,e){return l(s(o(t),e))},d=function(t,n){null==n&&(n="/");var a=l(t);if(r.call(i,a))return i[a].exports;if(r.call(e,a))return p(a,e[a]);throw new Error("Cannot find module '"+t+"' from '"+n+"'")};d.alias=function(t,e){n[e]=t};var h=/\.[^.\/]+$/,g=/\/index(\.[^\/]+)?$/,f=function(t){if(h.test(t)){var e=t.replace(h,"");r.call(n,e)&&n[e].replace(h,"")!==e+"/index"||(n[e]=t)}if(g.test(t)){var i=t.replace(g,"");r.call(n,i)||(n[i]=t)}};d.register=d.define=function(t,n){if(t&&"object"==typeof t)for(var a in t)r.call(t,a)&&d.register(a,t[a]);else e[t]=n,delete i[t],f(t)},d.list=function(){var t=[];for(var i in e)r.call(e,i)&&t.push(i);return t};var y=t._hmr&&new t._hmr(u,d,e,i);d._cache=i,d.hmr=y&&y.wrap,d.brunch=!0,t.require=d}}(),function(){"undefined"==typeof window?this:window;require.register("initialize.ts",function(t,e,i){"use strict";var n=e("./scenes/default"),r=e("./utils/scalemanager"),a=new Phaser.Game({width:1024,height:768,callbacks:{postBoot:function(){new r.ScaleManager(a,!a.device.os.windows&&!a.device.os.linux&&!a.device.os.macOS)}},type:Phaser.AUTO,parent:"content",title:"☕️ Brunch with Phaser",url:"https://github.com/samme/brunch-phaser-typescript",version:"0.0.1",banner:{background:["#e54661","#ffa644","#998a2f","#2c594f","#002d40"]},loader:{path:"assets/",maxParallelDownloads:6},physics:{"default":"arcade",arcade:{gravity:{y:180}}},scene:n.Main})}),require.register("scenes/default.ts",function(t,e,i){"use strict";var n=this&&this.__extends||function(t,e){function i(){this.constructor=t}for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n]);t.prototype=null===e?Object.create(e):(i.prototype=e.prototype,new i)},r=e("./testSpace"),a=function(t){function e(){return t.call(this,{key:"Main"})||this}return n(e,t),e.prototype.preload=function(){this.scene.add("TestSpace",r.TestSpace,!0)},e.prototype.create=function(){},e}(Phaser.Scene);t.Main=a}),require.register("scenes/testSpace.ts",function(t,e,i){"use strict";var n=this&&this.__extends||function(t,e){function i(){this.constructor=t}for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n]);t.prototype=null===e?Object.create(e):(i.prototype=e.prototype,new i)},r=e("../utils/manipulative/dotcard"),a=e("../utils/manipulative/numbertile"),s=e("../utils/dropzone"),o=e("../utils/background"),c=function(t){function e(){var e=t.call(this,{key:"TestSpace"})||this;return e.preload=function(){e.load.image("obstacle","obstacle.png"),e.load.image("manipulative","test_manipulative.png"),e.load.image("dropzone","dropzone.png"),e.load.image("plains","plain 2.jpg"),e.load.atlas("dotcards","atlas/dotCards.png","atlas/dotCards.json"),e.load.atlas("testing","atlas/megasetHD-1.png","atlas/megasetHD-1.json"),e.load.atlas("numbertiles","atlas/numberTiles.png","atlas/numberTiles.json"),e.load.audio("dropHit","sounds/dropHit.mp3",null,null),e.load.audio("dropMiss","sounds/dropMiss.mp3",null,null),e.load.audio("pickUp","sounds/pickUp.mp3",null,null)},e.create=function(){for(var t=(new o.Background(e,"plains"),[new s.DropZone(e,200,200,50,"DOTCARD"),new s.DropZone(e,200,350,50,"DOTCARD"),new s.DropZone(e,300,200,50,"NUMBERTILE"),new s.DropZone(e,300,300,50,"NUMBERTILE")]),i=0,n=t;i<n.length;i++){var c=n[i];c.render()}for(var p=[new r.DotCard(e,3,[t[0],t[1]]),new r.DotCard(e,4,[t[0],t[1]])],l=[new a.NumberTile(e,3,[t[2],t[3]]),new a.NumberTile(e,4,[t[2],t[3]])],u=0,d=p;u<d.length;u++){var h=d[u];h.dragSprite.setScale(.5)}for(var g=500,f=100,y=0,v=p;y<v.length;y++){var h=v[y];h.render(f,g),f+=100}for(var m=0,S=l;m<S.length;m++){var w=S[m];w.render(f,g),f+=100}},e}return n(e,t),e}(Phaser.Scene);t.TestSpace=c}),require.register("utils/background.ts",function(t,e,i){"use strict";var n=function(){function t(t,e){this.targetScene=t,this.targetScene.add.image(0,0,e).setOrigin(0,0)}return t}();t.Background=n}),require.register("utils/dropzone.ts",function(t,e,i){"use strict";var n=function(){function t(t,e,i,n,r){this.targetScene=t,this.x=e,this.y=i,this.pullRadius=n,this.acceptedType=r}return t.prototype.render=function(){switch(this.dropZone=this.targetScene.add.sprite(this.x,this.y,"dropzone"),this.dropZone.setAlpha(.6),this.targetScene.tweens.add({targets:[this.dropZone],alpha:.4,duration:500,ease:"Sine.easeInOut",yoyo:!0,repeat:-1}),this.acceptedType){case"BAR":break;case"DOTCARD":console.log("DOTCARD"),this.dropZone.displayWidth=75,this.dropZone.displayHeight=100;break;case"NUMBERTILE":this.dropZone.displayWidth=60,this.dropZone.displayHeight=60}},t.prototype.checkBounds=function(t,e,i){return t<this.x+this.dropZone.displayWidth&&t>this.x-this.dropZone.displayWidth&&e<this.y+this.dropZone.displayHeight&&e>this.y-this.dropZone.displayHeight&&i.type==this.acceptedType},t}();t.DropZone=n}),require.register("utils/manipulative/bar.ts",function(t,e,i){"use strict";var n=this&&this.__extends||function(t,e){function i(){this.constructor=t}for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n]);t.prototype=null===e?Object.create(e):(i.prototype=e.prototype,new i)},r=e("./manipulatives"),a=function(t){function e(e,i,n,a,s,o,c,p){return t.call(this,e,i,r.ManipulativeType.BAR,n,a)||this}return n(e,t),e.prototype.render=function(e,i){t.prototype.render.call(this,e,i)},e}(r.Manipulative);t.Bar=a}),require.register("utils/manipulative/dotcard.ts",function(t,e,i){"use strict";var n=this&&this.__extends||function(t,e){function i(){this.constructor=t}for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n]);t.prototype=null===e?Object.create(e):(i.prototype=e.prototype,new i)},r=e("./manipulatives"),a=function(t){function e(e,i,n,a,s,o,c){var p=this,l=i.toString(),u=e.add.sprite(0,0,"dotcards",l);return p=t.call(this,e,i,r.ManipulativeType.DOTCARD,u,n)||this}return n(e,t),e.prototype.render=function(e,i){t.prototype.render.call(this,e,i)},e}(r.Manipulative);t.DotCard=a}),require.register("utils/manipulative/manipulatives.ts",function(t,e,i){"use strict";var n=e("../soundmanager"),r=function(){function t(t,e,i,r,s,o,c,p,l){this.isDragging=!1,this.startDragMS=0,this.minDragDelay=200,this.targetScene=t,this.value=e,this.type=i,this.dragSprite=r,this.onClick=o,this.onPointerDown=c,this.onPointerOver=p,this.onPointerOut=l,this.dragPoints=s,this.dragSprite=r,this.type==a.DOTCARD?this.originalScale=.5:this.originalScale=this.dragSprite.scaleX,this.dragSprite.visible=!1,this.soundManager=new n.SoundManager(this.targetScene,["pickUp","dropHit","dropMiss"])}return t.prototype.clickAndFollow=function(t,e,i){var n=this;this.dragSprite=t,t.on("pointerdown",function(){n.isDragging?n.stopDrag(e,i):n.startDrag()}),t.on("pointerup",function(){if(n.isDragging){var t=Date.now()-n.startDragMS;t>n.minDragDelay&&n.stopDrag(e,i)}}),this.targetScene.input.on("pointermove",function(e){n.isDragging&&(t.x=e.x,t.y=e.y)})},t.prototype.startDrag=function(){this.isDragging||(this.soundManager.play("pickUp"),this.dragSprite.setScale(1.25*this.originalScale),this.dragSprite.setDepth(100),this.isDragging=!0,this.targetScene.input.mouse.requestPointerLock(),this.startDragMS=Date.now())},t.prototype.stopDrag=function(t,e){for(var i=!1,n=0;n<this.dragPoints.length;n++)if(this.dragPoints[n].checkBounds(this.dragSprite.x,this.dragSprite.y,this))if(this.dragPoints[n].manipulativeInZone){console.log("found manipulative in spot, switching...");var r=this.dragPoints[n].manipulativeInZone;r.dragSprite.x=r.originalX,r.dragSprite.y=r.originalY,this.soundManager.play("dropHit"),this.dragSprite.x=this.dragPoints[n].x,this.dragSprite.y=this.dragPoints[n].y,this.dragPoints[n].manipulativeInZone=this,i=!0}else this.soundManager.play("dropHit"),this.dragSprite.x=this.dragPoints[n].x,this.dragSprite.y=this.dragPoints[n].y,this.dragPoints[n].manipulativeInZone=this,i=!0;else this.dragPoints[n].manipulativeInZone=void 0;i||(this.soundManager.play("dropMiss"),this.dragSprite.x=t,this.dragSprite.y=e),this.dragSprite.setScale(this.originalScale),this.dragSprite.setDepth(0),this.targetScene.input.mouse.releasePointerLock(),console.log("drop"),this.isDragging=!1},t.prototype.activateOnMouseOver=function(){},t.prototype.render=function(t,e,i){this.originalX=t,this.originalY=e,this.dragSprite.visible=!0,this.dragSprite.x=t,this.dragSprite.y=e,this.dragSprite.setInteractive(),this.origScale=this.dragSprite.scale;this.clickAndFollow(this.dragSprite,t,e),this.activateOnMouseOver()},t}();t.Manipulative=r;var a;!function(t){t[t.BAR="BAR"]="BAR",t[t.DOTCARD="DOTCARD"]="DOTCARD",t[t.NUMBERTILE="NUMBERTILE"]="NUMBERTILE"}(a=t.ManipulativeType||(t.ManipulativeType={}))}),require.register("utils/manipulative/numbertile.ts",function(t,e,i){"use strict";var n=this&&this.__extends||function(t,e){function i(){this.constructor=t}for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n]);t.prototype=null===e?Object.create(e):(i.prototype=e.prototype,new i)},r=e("./manipulatives"),a=function(t){function e(e,i,n,a,s,o,c){var p=this,l=i.toString(),u=e.add.sprite(0,0,"numbertiles",l+"_tex.png");return p=t.call(this,e,i,r.ManipulativeType.NUMBERTILE,u,n)||this}return n(e,t),e.prototype.render=function(e,i){t.prototype.render.call(this,e,i)},e}(r.Manipulative);t.NumberTile=a}),require.register("utils/scalemanager.ts",function(t,e,i){"use strict";var n=function(){function t(t,e){var i=this;this.canvas=t.canvas,this.mobile=e,this.game=t,window.addEventListener("resize",function(){i.rescale(),i.mobile&&(window.innerWidth<window.innerHeight?i.leaveIncorrectOrientation():i.enterIncorrectOrientation())}),this.rescale()}return t.prototype.resize=function(t,e){this.game.resize(t,e),this.game.scene.scenes.forEach(function(i){i.cameras.main.setViewport(0,0,t,e),i.cameras.main.setZoom(this.scale)}),this.rescale()},t.prototype.rescale=function(){var t="50% 50%",e=Math.min(window.innerWidth/this.canvas.width,window.innerHeight/this.canvas.height);this.canvas.height*e;this.canvas.setAttribute("style","-ms-transform-origin: "+t+"; -webkit-transform-origin: "+t+"; -moz-transform-origin: "+t+"; -o-transform-origin: "+t+"; transform-origin: "+t+"; -ms-transform: scale("+e+"); -webkit-transform: scale3d("+e+", 1); -moz-transform: scale("+e+"); -o-transform: scale("+e+");  transform: scale("+e+"); display: block; margin: 0; padding: 0; vertical-align: baseline;")},t.prototype.enterIncorrectOrientation=function(){document.getElementById("orientation").style.display="block",document.getElementById("content").style.display="none"},t.prototype.leaveIncorrectOrientation=function(){document.getElementById("orientation").style.display="none",document.getElementById("content").style.display="block"},t}();t.ScaleManager=n}),require.register("utils/soundmanager.ts",function(t,e,i){"use strict";var n=function(){function t(t,e){this.sounds=[],this.targetScene=t,this.soundKeys=e;for(var i=0;i<e.length;i++)this.sounds.push(t.sound.add(e[i]));t.load.once("filecomplete",this.doneLoad)}return t.prototype.doneLoad=function(){console.log("a file is done loading")},t.prototype.play=function(t){var e=this.soundKeys.indexOf(t);e>=0?this.sounds[e].play():console.log("audio not found:",t)},t}();t.SoundManager=n}),require.register("___globals___",function(t,e,i){})}(),require("___globals___"),require("initialize");
+(function() {
+  'use strict';
+
+  var globals = typeof global === 'undefined' ? self : global;
+  if (typeof globals.require === 'function') return;
+
+  var modules = {};
+  var cache = {};
+  var aliases = {};
+  var has = {}.hasOwnProperty;
+
+  var expRe = /^\.\.?(\/|$)/;
+  var expand = function(root, name) {
+    var results = [], part;
+    var parts = (expRe.test(name) ? root + '/' + name : name).split('/');
+    for (var i = 0, length = parts.length; i < length; i++) {
+      part = parts[i];
+      if (part === '..') {
+        results.pop();
+      } else if (part !== '.' && part !== '') {
+        results.push(part);
+      }
+    }
+    return results.join('/');
+  };
+
+  var dirname = function(path) {
+    return path.split('/').slice(0, -1).join('/');
+  };
+
+  var localRequire = function(path) {
+    return function expanded(name) {
+      var absolute = expand(dirname(path), name);
+      return globals.require(absolute, path);
+    };
+  };
+
+  var initModule = function(name, definition) {
+    var hot = hmr && hmr.createHot(name);
+    var module = {id: name, exports: {}, hot: hot};
+    cache[name] = module;
+    definition(module.exports, localRequire(name), module);
+    return module.exports;
+  };
+
+  var expandAlias = function(name) {
+    return aliases[name] ? expandAlias(aliases[name]) : name;
+  };
+
+  var _resolve = function(name, dep) {
+    return expandAlias(expand(dirname(name), dep));
+  };
+
+  var require = function(name, loaderPath) {
+    if (loaderPath == null) loaderPath = '/';
+    var path = expandAlias(name);
+
+    if (has.call(cache, path)) return cache[path].exports;
+    if (has.call(modules, path)) return initModule(path, modules[path]);
+
+    throw new Error("Cannot find module '" + name + "' from '" + loaderPath + "'");
+  };
+
+  require.alias = function(from, to) {
+    aliases[to] = from;
+  };
+
+  var extRe = /\.[^.\/]+$/;
+  var indexRe = /\/index(\.[^\/]+)?$/;
+  var addExtensions = function(bundle) {
+    if (extRe.test(bundle)) {
+      var alias = bundle.replace(extRe, '');
+      if (!has.call(aliases, alias) || aliases[alias].replace(extRe, '') === alias + '/index') {
+        aliases[alias] = bundle;
+      }
+    }
+
+    if (indexRe.test(bundle)) {
+      var iAlias = bundle.replace(indexRe, '');
+      if (!has.call(aliases, iAlias)) {
+        aliases[iAlias] = bundle;
+      }
+    }
+  };
+
+  require.register = require.define = function(bundle, fn) {
+    if (bundle && typeof bundle === 'object') {
+      for (var key in bundle) {
+        if (has.call(bundle, key)) {
+          require.register(key, bundle[key]);
+        }
+      }
+    } else {
+      modules[bundle] = fn;
+      delete cache[bundle];
+      addExtensions(bundle);
+    }
+  };
+
+  require.list = function() {
+    var list = [];
+    for (var item in modules) {
+      if (has.call(modules, item)) {
+        list.push(item);
+      }
+    }
+    return list;
+  };
+
+  var hmr = globals._hmr && new globals._hmr(_resolve, require, modules, cache);
+  require._cache = cache;
+  require.hmr = hmr && hmr.wrap;
+  require.brunch = true;
+  globals.require = require;
+})();
+
+(function() {
+var global = typeof window === 'undefined' ? this : window;
+var __makeRelativeRequire = function(require, mappings, pref) {
+  var none = {};
+  var tryReq = function(name, pref) {
+    var val;
+    try {
+      val = require(pref + '/node_modules/' + name);
+      return val;
+    } catch (e) {
+      if (e.toString().indexOf('Cannot find module') === -1) {
+        throw e;
+      }
+
+      if (pref.indexOf('node_modules') !== -1) {
+        var s = pref.split('/');
+        var i = s.lastIndexOf('node_modules');
+        var newPref = s.slice(0, i).join('/');
+        return tryReq(name, newPref);
+      }
+    }
+    return none;
+  };
+  return function(name) {
+    if (name in mappings) name = mappings[name];
+    if (!name) return;
+    if (name[0] !== '.' && pref) {
+      var val = tryReq(name, pref);
+      if (val !== none) return val;
+    }
+    return require(name);
+  }
+};
+require.register("initialize.ts", function(exports, require, module) {
+"use strict";
+var default_1 = require("./scenes/default");
+var scalemanager_1 = require("./utils/scalemanager");
+var game = new Phaser.Game({
+    // See <https://github.com/photonstorm/phaser/blob/master/src/boot/Config.js>
+    width: 1024,
+    height: 768,
+    // zoom: 1,
+    // resolution: 1,
+    callbacks: {
+        postBoot: function () {
+            new scalemanager_1.ScaleManager(game, (!game.device.os.windows && !game.device.os.linux && !game.device.os.macOS));
+        }
+    },
+    type: Phaser.AUTO,
+    parent: "content",
+    // canvas: null,
+    // canvasStyle: null,
+    // seed: null,
+    title: '☕️ Brunch with Phaser',
+    url: 'https://github.com/samme/brunch-phaser-typescript',
+    version: '0.0.1',
+    // input: {
+    //   keyboard: true,
+    //   mouse: true,
+    //   touch: true,
+    //   gamepad: false
+    // },
+    // disableContextMenu: false,
+    // banner: false
+    banner: {
+        // hidePhaser: false,
+        // text: 'white',
+        background: ['#e54661', '#ffa644', '#998a2f', '#2c594f', '#002d40']
+    },
+    // fps: {
+    //   min: 10,
+    //   target: 60,
+    //   forceSetTimeout: false,
+    // },
+    // pixelArt: false,
+    // transparent: false,
+    // clearBeforeRender: true,
+    // backgroundColor: 0x000000, // black
+    loader: {
+        // baseURL: '',
+        path: 'assets/',
+        maxParallelDownloads: 6,
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: {
+                y: 180
+            }
+        }
+    },
+    scene: default_1.Main,
+});
+//# sourceMappingURL=initialize.js.map
+});
+
+require.register("scenes/default.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var testSpace_1 = require("./testSpace");
+var Main = (function (_super) {
+    __extends(Main, _super);
+    function Main() {
+        return _super.call(this, {
+            key: "Main"
+        }) || this;
+    }
+    Main.prototype.preload = function () {
+        this.scene.add("TestSpace", testSpace_1.TestSpace, true);
+    };
+    Main.prototype.create = function () {
+        //this.add.text(100, 100, "Hello, world!")
+    };
+    return Main;
+}(Phaser.Scene));
+exports.Main = Main;
+//# sourceMappingURL=default.js.map
+});
+
+;require.register("scenes/testSpace.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var dotcard_1 = require("../utils/manipulative/dotcard");
+var numbertile_1 = require("../utils/manipulative/numbertile");
+var dropzone_1 = require("../utils/dropzone");
+var background_1 = require("../utils/background");
+var narrationmanager_1 = require("../utils/narrationmanager");
+var TestSpace = (function (_super) {
+    __extends(TestSpace, _super);
+    function TestSpace() {
+        var _this = _super.call(this, {
+            key: "TestSpace"
+        }) || this;
+        _this.preload = function () {
+            _this.load.audio("dropHit", "sounds/dropHit.mp3", null, null);
+            _this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null);
+            _this.load.audio("pickUp", "sounds/pickUp.mp3", null, null);
+            _this.load.audio("plus", "sounds/plus.mp3", null, null);
+            _this.load.audio("pre_3", "sounds/pre_3.mp3", null, null);
+            _this.load.audio("post_9", "sounds/post_9.mp3", null, null);
+            _this.load.audio("post_10", "sounds/pre_10.mp3", null, null);
+            _this.load.audio("equals", "sounds/equals.mp3", null, null);
+            _this.load.image("obstacle", "obstacle.png");
+            _this.load.image("manipulative", "test_manipulative.png");
+            _this.load.image("dropzone", "dropzone.png");
+            _this.load.image("plains", "plain 2.jpg");
+            _this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json");
+            _this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json");
+            _this.load.atlas("numbertiles", "atlas/numberTiles.png", "atlas/numberTiles.json");
+        };
+        _this.create = function () {
+            var bg = new background_1.Background(_this, "plains");
+            var dropZones = [
+                new dropzone_1.DropZone(_this, 200, 200, 50, "DOTCARD"),
+                new dropzone_1.DropZone(_this, 200, 350, 50, "DOTCARD"),
+                new dropzone_1.DropZone(_this, 300, 200, 50, "NUMBERTILE"),
+                new dropzone_1.DropZone(_this, 300, 300, 50, "NUMBERTILE"),
+            ];
+            for (var _i = 0, dropZones_1 = dropZones; _i < dropZones_1.length; _i++) {
+                var dropZone = dropZones_1[_i];
+                dropZone.render();
+            }
+            // this.add.image(400, 400, "obstacle");
+            // let manipulative=this.add.sprite(0, 0, 'manipulative')
+            // this.add.sprite(200, 300, "dotcards", "1").setScale(0.5)
+            // let dropZone=new DropZone(this, 400, 400, 50, "BAR")
+            // let bar=new Bar(this, 10, manipulative, dropZone);
+            // bar.render(300, 300);
+            var dotCards = [
+                new dotcard_1.DotCard(_this, 3, [dropZones[0], dropZones[1]]),
+                new dotcard_1.DotCard(_this, 4, [dropZones[0], dropZones[1]])
+            ];
+            var numberTiles = [
+                new numbertile_1.NumberTile(_this, 3, [dropZones[2], dropZones[3]]),
+                new numbertile_1.NumberTile(_this, 4, [dropZones[2], dropZones[3]])
+            ];
+            for (var _a = 0, dotCards_1 = dotCards; _a < dotCards_1.length; _a++) {
+                var dotCard = dotCards_1[_a];
+                dotCard.dragSprite.setScale(0.5);
+            }
+            var y = 500;
+            var x = 100;
+            for (var _b = 0, dotCards_2 = dotCards; _b < dotCards_2.length; _b++) {
+                var dotCard = dotCards_2[_b];
+                dotCard.render(x, y);
+                x += 100;
+            }
+            for (var _c = 0, numberTiles_1 = numberTiles; _c < numberTiles_1.length; _c++) {
+                var numberTile = numberTiles_1[_c];
+                numberTile.render(x, y);
+                x += 100;
+            }
+            var narrationManager = new narrationmanager_1.NarrationManager(_this, ["pre_3", "plus", "post_9", "equals"]);
+            narrationManager.play(800);
+        };
+        return _this;
+    }
+    return TestSpace;
+}(Phaser.Scene));
+exports.TestSpace = TestSpace;
+//# sourceMappingURL=testSpace.js.map
+});
+
+;require.register("utils/background.ts", function(exports, require, module) {
+"use strict";
+var Background = (function () {
+    function Background(aTargetScene, aBackgroundImageKey) {
+        this.targetScene = aTargetScene;
+        this.targetScene.add.image(0, 0, aBackgroundImageKey).setOrigin(0, 0);
+    }
+    return Background;
+}());
+exports.Background = Background;
+//# sourceMappingURL=background.js.map
+});
+
+;require.register("utils/dropzone.ts", function(exports, require, module) {
+"use strict";
+/**
+ * For dragging manipulatives to the drop area
+ */
+var DropZone = (function () {
+    function DropZone(aTargetScene, destX, destY, aPullRadius, anAcceptedType) {
+        this.targetScene = aTargetScene;
+        this.x = destX;
+        this.y = destY;
+        this.pullRadius = aPullRadius;
+        this.acceptedType = anAcceptedType;
+    }
+    DropZone.prototype.render = function () {
+        this.dropZone = this.targetScene.add.sprite(this.x, this.y, "dropzone");
+        this.dropZone.setAlpha(0.6);
+        this.targetScene.tweens.add({
+            targets: [this.dropZone],
+            alpha: 0.4,
+            duration: 500,
+            ease: "Sine.easeInOut",
+            yoyo: true,
+            repeat: -1
+        });
+        switch (this.acceptedType) {
+            case "BAR":
+                break;
+            case "DOTCARD":
+                console.log("DOTCARD");
+                this.dropZone.displayWidth = 75;
+                this.dropZone.displayHeight = 100;
+                break;
+            case "NUMBERTILE":
+                this.dropZone.displayWidth = 60;
+                this.dropZone.displayHeight = 60;
+                break;
+            default:
+                break;
+        }
+    };
+    DropZone.prototype.checkBounds = function (x, y, manipulative) {
+        if ((x < this.x + this.dropZone.displayWidth && x > this.x - this.dropZone.displayWidth)
+            &&
+                (y < this.y + this.dropZone.displayHeight && y > this.y - this.dropZone.displayHeight)
+            && manipulative.type == this.acceptedType) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    return DropZone;
+}());
+exports.DropZone = DropZone;
+//# sourceMappingURL=dropzone.js.map
+});
+
+;require.register("utils/manipulative/dotcard.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var manipulatives_1 = require("./manipulatives");
+var DotCard = (function (_super) {
+    __extends(DotCard, _super);
+    function DotCard(theTargetScene, aValue, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        var _this = this;
+        var frame = aValue.toString();
+        var dotCard = theTargetScene.add.sprite(0, 0, "dotcards", frame);
+        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, someDragPoints) || this;
+        return _this;
+    }
+    //dotcard specific rendering method
+    DotCard.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return DotCard;
+}(manipulatives_1.Manipulative));
+exports.DotCard = DotCard;
+//# sourceMappingURL=dotcard.js.map
+});
+
+;require.register("utils/manipulative/manipulatives.ts", function(exports, require, module) {
+"use strict";
+var soundmanager_1 = require("../soundmanager");
+var Manipulative = (function () {
+    function Manipulative(theTargetScene, aValue, aType, 
+        // aResource:string,
+        aSprite, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointeroutCallback) {
+        this.isDragging = false;
+        this.startDragMS = 0;
+        this.minDragDelay = 200;
+        this.targetScene = theTargetScene;
+        this.value = aValue;
+        this.type = aType;
+        // this.resourceKey=aResource;
+        this.dragSprite = aSprite;
+        this.onClick = clickCallback;
+        this.onPointerDown = pointerdownCallback;
+        this.onPointerOver = pointeroverCallback;
+        this.onPointerOut = pointeroutCallback;
+        this.dragPoints = someDragPoints;
+        this.dragSprite = aSprite;
+        //dotcards too big hotfix
+        if (this.type == ManipulativeType.DOTCARD) {
+            this.originalScale = 0.5;
+        }
+        else {
+            this.originalScale = this.dragSprite.scaleX;
+        }
+        this.dragSprite.visible = false;
+        this.soundManager = new soundmanager_1.SoundManager(this.targetScene, [
+            "dropHit",
+            "dropMiss",
+            "pickUp"
+        ]);
+        console.log(this.soundManager);
+    }
+    Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
+        var _this = this;
+        this.dragSprite = dragSprite;
+        dragSprite.on("pointerdown", function () {
+            if (!_this.isDragging) {
+                _this.startDrag();
+            }
+            else {
+                _this.stopDrag(originX, originY);
+            }
+        });
+        dragSprite.on("pointerup", function () {
+            if (_this.isDragging) {
+                var timeLapse = Date.now() - _this.startDragMS;
+                //var inOrigArea:boolean = this.checkBounds(dragSprite.x, dragSprite.y);    
+                if (timeLapse > _this.minDragDelay) {
+                    _this.stopDrag(originX, originY);
+                }
+            }
+        });
+        this.targetScene.input.on("pointermove", function (pointer) {
+            if (_this.isDragging) {
+                dragSprite.x = pointer.x;
+                dragSprite.y = pointer.y;
+            }
+        });
+    };
+    Manipulative.prototype.startDrag = function () {
+        if (!this.isDragging) {
+            this.soundManager.play("pickUp");
+            this.dragSprite.setScale(this.originalScale * 1.25);
+            this.dragSprite.setDepth(100);
+            this.isDragging = true;
+            this.targetScene.input.mouse.requestPointerLock();
+            this.startDragMS = Date.now();
+        }
+    };
+    Manipulative.prototype.stopDrag = function (originX, originY) {
+        var isInBounds = false;
+        for (var i = 0; i < this.dragPoints.length; i++) {
+            if (this.dragPoints[i].checkBounds(this.dragSprite.x, this.dragSprite.y, this)) {
+                if (!this.dragPoints[i].manipulativeInZone) {
+                    this.soundManager.play("dropHit");
+                    this.dragSprite.x = this.dragPoints[i].x;
+                    this.dragSprite.y = this.dragPoints[i].y;
+                    this.dragPoints[i].manipulativeInZone = this;
+                    isInBounds = true;
+                    ;
+                }
+                else {
+                    console.log("found manipulative in spot, switching...");
+                    var man = this.dragPoints[i].manipulativeInZone;
+                    man.dragSprite.x = man.originalX;
+                    man.dragSprite.y = man.originalY;
+                    this.soundManager.play("dropHit");
+                    this.dragSprite.x = this.dragPoints[i].x;
+                    this.dragSprite.y = this.dragPoints[i].y;
+                    this.dragPoints[i].manipulativeInZone = this;
+                    isInBounds = true;
+                }
+            }
+            else {
+                this.dragPoints[i].manipulativeInZone = undefined;
+            }
+        }
+        if (!isInBounds) {
+            this.soundManager.play("dropMiss");
+            this.dragSprite.x = originX;
+            this.dragSprite.y = originY;
+        }
+        this.dragSprite.setScale(this.originalScale);
+        this.dragSprite.setDepth(0);
+        this.targetScene.input.mouse.releasePointerLock();
+        console.log('drop');
+        this.isDragging = false;
+    };
+    Manipulative.prototype.activateOnMouseOver = function () {
+        // this.dragSprite.on("pointerover", ()=>{
+        //     this.dragSprite.setScale(this.originalScale*1.25)
+        // })
+        // this.dragSprite.on("pointerout", ()=>{
+        //     this.dragSprite.setScale(this.originalScale);
+        // })
+    };
+    Manipulative.prototype.render = function (x, y, scale) {
+        this.originalX = x;
+        this.originalY = y;
+        this.dragSprite.visible = true;
+        // this.dragSprite = this.targetScene.add.sprite(x, y, this.resourceKey);
+        this.dragSprite.x = x;
+        this.dragSprite.y = y;
+        this.dragSprite.setInteractive();
+        this.origScale = this.dragSprite.scale;
+        // this.pickUp=this.targetScene.sound.add("pickUp");
+        // this.dropHit=this.targetScene.sound.add("dropHit");
+        // this.dropMiss=this.targetScene.sound.add("dropMiss");
+        var isDragging = false;
+        this.clickAndFollow(this.dragSprite, x, y);
+        this.activateOnMouseOver();
+    };
+    return Manipulative;
+}());
+exports.Manipulative = Manipulative;
+var ManipulativeType;
+(function (ManipulativeType) {
+    ManipulativeType[ManipulativeType["BAR"] = "BAR"] = "BAR";
+    ManipulativeType[ManipulativeType["DOTCARD"] = "DOTCARD"] = "DOTCARD";
+    ManipulativeType[ManipulativeType["NUMBERTILE"] = "NUMBERTILE"] = "NUMBERTILE";
+})(ManipulativeType = exports.ManipulativeType || (exports.ManipulativeType = {}));
+//# sourceMappingURL=manipulatives.js.map
+});
+
+;require.register("utils/manipulative/numbertile.ts", function(exports, require, module) {
+"use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var manipulatives_1 = require("./manipulatives");
+var NumberTile = (function (_super) {
+    __extends(NumberTile, _super);
+    function NumberTile(theTargetScene, aValue, someDragPoints, clickCallback, pointerdownCallback, pointeroverCallback, pointerupCallback) {
+        var _this = this;
+        var frame = aValue.toString();
+        var numberTile = theTargetScene.add.sprite(0, 0, "numbertiles", frame + "_tex.png");
+        // console.log(numberTile)
+        _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.NUMBERTILE, numberTile, someDragPoints) || this;
+        return _this;
+    }
+    //dotcard specific rendering method
+    NumberTile.prototype.render = function (x, y) {
+        _super.prototype.render.call(this, x, y);
+    };
+    return NumberTile;
+}(manipulatives_1.Manipulative));
+exports.NumberTile = NumberTile;
+//# sourceMappingURL=numbertile.js.map
+});
+
+;require.register("utils/narrationmanager.ts", function(exports, require, module) {
+"use strict";
+var soundmanager_1 = require("./soundmanager");
+var NarrationManager = (function () {
+    function NarrationManager(aTargetScene, someSounds) {
+        this.sounds = someSounds;
+        this.targetScene = aTargetScene;
+        this.soundManager = new soundmanager_1.SoundManager(aTargetScene, someSounds);
+        // this.soundManager=Main.soundManager;
+    }
+    NarrationManager.prototype.play = function (delay) {
+        var _this = this;
+        var i = 0;
+        var howManyTimes = this.sounds.length;
+        var f = function () {
+            _this.soundManager.play(_this.sounds[i]);
+            i++;
+            if (i < howManyTimes) {
+                setTimeout(f, delay);
+            }
+        };
+        f();
+    };
+    return NarrationManager;
+}());
+exports.NarrationManager = NarrationManager;
+//# sourceMappingURL=narrationmanager.js.map
+});
+
+;require.register("utils/scalemanager.ts", function(exports, require, module) {
+"use strict";
+var ScaleManager = (function () {
+    function ScaleManager(game, isMobile) {
+        var _this = this;
+        // console.log(game)
+        // console.log(game.canvas);
+        this.canvas = game.canvas;
+        this.mobile = isMobile;
+        this.game = game;
+        window.addEventListener('resize', function () {
+            _this.rescale();
+            // this.canvas.height=window.outerHeight;
+            // this.canvas.width=window.outerWidth;
+            if (_this.mobile) {
+                if (window.innerWidth < window.innerHeight) {
+                    _this.leaveIncorrectOrientation();
+                }
+                else {
+                    _this.enterIncorrectOrientation();
+                }
+            }
+        });
+        this.rescale();
+    }
+    ScaleManager.prototype.resize = function (width, height) {
+        this.game.resize(width, height);
+        this.game.scene.scenes.forEach(function (scene) {
+            scene.cameras.main.setViewport(0, 0, width, height);
+            scene.cameras.main.setZoom(this.scale);
+        });
+        this.rescale();
+    };
+    ScaleManager.prototype.rescale = function () {
+        // var orientation = (this.mobile) ? 'left top' : 'center top';
+        var orientation = "50% 50%";
+        var scale = Math.min(window.innerWidth / this.canvas.width, window.innerHeight / this.canvas.height);
+        var usedHeight = this.canvas.height * scale;
+        //document.body.height = window.innerHeight;
+        this.canvas.setAttribute('style', '-ms-transform-origin: ' + orientation + '; -webkit-transform-origin: ' + orientation + ';' +
+            ' -moz-transform-origin: ' + orientation + '; -o-transform-origin: ' + orientation + '; transform-origin: ' + orientation + ';' +
+            ' -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1);' +
+            ' -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); ' +
+            ' transform: scale(' + scale + ');' +
+            ' display: block; margin: 0; padding: 0; vertical-align: baseline;');
+    };
+    ScaleManager.prototype.enterIncorrectOrientation = function () {
+        document.getElementById("orientation").style.display = "block";
+        document.getElementById("content").style.display = "none";
+    };
+    ScaleManager.prototype.leaveIncorrectOrientation = function () {
+        document.getElementById("orientation").style.display = "none";
+        document.getElementById("content").style.display = "block";
+    };
+    return ScaleManager;
+}());
+exports.ScaleManager = ScaleManager;
+//# sourceMappingURL=scalemanager.js.map
+});
+
+;require.register("utils/soundmanager.ts", function(exports, require, module) {
+"use strict";
+var SoundManager = (function () {
+    function SoundManager(aTargetScene, someSoundKeys) {
+        //an array of sound objects to play
+        this.sounds = [];
+        this.targetScene = aTargetScene;
+        this.soundKeys = someSoundKeys;
+        aTargetScene.load.audio("pre_3", "sounds/pre_3.mp3");
+        for (var i = 0; i < someSoundKeys.length; i++) {
+            var sound = this.targetScene.sound.add(someSoundKeys[i]);
+            this.sounds.push(sound);
+        }
+        aTargetScene.load.once('filecomplete', this.doneLoad);
+    }
+    SoundManager.prototype.doneLoad = function () {
+        console.log('a file is done loading');
+    };
+    SoundManager.prototype.play = function (sound) {
+        var index = this.soundKeys.indexOf(sound);
+        if (index >= 0) {
+            this.sounds[index].play();
+        }
+        else {
+            console.log('audio not found:', sound);
+        }
+    };
+    return SoundManager;
+}());
+exports.SoundManager = SoundManager;
+//# sourceMappingURL=soundmanager.js.map
+});
+
+;require.register("___globals___", function(exports, require, module) {
+  
+});})();require('___globals___');
+
+require('initialize');
+//# sourceMappingURL=app.js.map

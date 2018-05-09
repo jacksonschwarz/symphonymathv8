@@ -6,13 +6,25 @@ import {NumberTile} from "../utils/manipulative/numbertile";
 import {DropZone} from "../utils/dropzone";
 import {Background} from "../utils/background";
 
+import {NarrationManager} from "../utils/narrationmanager";
+import {SoundManager} from "../utils/soundmanager";
 export class TestSpace extends Phaser.Scene{
+
     constructor(){
         super({
             key:"TestSpace"
         })
     }
     preload=()=>{
+        this.load.audio("dropHit", "sounds/dropHit.mp3", null, null)
+        this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null)
+        this.load.audio("pickUp", "sounds/pickUp.mp3", null, null)
+    
+        this.load.audio("plus", "sounds/plus.mp3", null, null)
+        this.load.audio("pre_3", "sounds/pre_3.mp3", null, null)
+        this.load.audio("post_9", "sounds/post_9.mp3", null, null)
+        this.load.audio("post_10", "sounds/pre_10.mp3", null, null)
+        this.load.audio("equals", "sounds/equals.mp3", null, null)
         this.load.image("obstacle", "obstacle.png")
         this.load.image("manipulative", "test_manipulative.png");
         this.load.image("dropzone", "dropzone.png")
@@ -20,9 +32,6 @@ export class TestSpace extends Phaser.Scene{
         this.load.atlas("dotcards", "atlas/dotCards.png", "atlas/dotCards.json")
         this.load.atlas("testing", "atlas/megasetHD-1.png", "atlas/megasetHD-1.json")
         this.load.atlas("numbertiles", "atlas/numberTiles.png", "atlas/numberTiles.json")
-        this.load.audio("dropHit", "sounds/dropHit.mp3", null, null)
-        this.load.audio("dropMiss", "sounds/dropMiss.mp3", null, null)
-        this.load.audio("pickUp", "sounds/pickUp.mp3", null, null)
 
     }
     create=()=>{
@@ -46,6 +55,9 @@ export class TestSpace extends Phaser.Scene{
         // let dropZone=new DropZone(this, 400, 400, 50, "BAR")
         // let bar=new Bar(this, 10, manipulative, dropZone);
         // bar.render(300, 300);
+
+
+
         let dotCards=[
             new DotCard(this, 3, [dropZones[0], dropZones[1]]),
             new DotCard(this, 4, [dropZones[0], dropZones[1]])
@@ -68,9 +80,9 @@ export class TestSpace extends Phaser.Scene{
             numberTile.render(x, y)
             x+=100;
         }
-        // let dotCard=new DotCard(this, 3, dropZone);
-        // dotCard.dragSprite.setScale(0.5)
-        // dotCard.render(500, 500);
+        let narrationManager=new NarrationManager(this, ["pre_3", "plus", "post_9", "equals"])
+        narrationManager.play(800)
+
 
     }
 }
