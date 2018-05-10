@@ -24,9 +24,12 @@ export class TestSpace extends Phaser.Scene{
         this.load.image("manipulative", "img/test_manipulative.png");
         this.load.image("dropzone", "img/dropzone.png")
         this.load.image("plains", "img/plain 2.jpg")
+
         this.load.atlas("dotcards", "img/atlas/dotCards.png", "img/atlas/dotCards.json")
         this.load.atlas("numbertiles", "img/atlas/numberTiles.png", "img/atlas/numberTiles.json")
         this.load.atlas("menu", "img/atlas/topBarAndButtons.png", "img/atlas/topBarAndButtons.json")
+        this.load.atlas("slider", "img/atlas/Sliders.png", "img/atlas/Sliders.json")
+
         this.load.audio("dropHit", "audio/sfx/dropHit.mp3", null, null)
         this.load.audio("dropMiss", "audio/sfx/dropMiss.mp3", null, null)
         this.load.audio("pickUp", "audio/sfx/pickUp.mp3", null, null)
@@ -125,5 +128,18 @@ export class TestSpace extends Phaser.Scene{
         )
         task.render()
         
+        // let test=this.add.sprite(50, 50, "numbertiles", "1_tex.png")
+        // test.setOrigin(0.0)
+        // test.setPipeline("Light2D")
+        // let light  = this.lights.
+        
+        // this.lights.enable().setAmbientColor(0x555555);
+    
+        // this.input.on('pointermove', function (pointer) {
+    
+        //     light.x = pointer.x;
+        //     light.y = pointer.y;
+    
+        // });
     }
 }

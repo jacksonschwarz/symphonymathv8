@@ -30,4 +30,7 @@ export class NarrationManager{
         }
         f();
     }
+    addSound(soundKey:string){
+        this.soundManager.soundKeys.push()
+    }
 }

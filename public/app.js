@@ -261,6 +261,7 @@ var TestSpace = (function (_super) {
             _this.load.atlas("dotcards", "img/atlas/dotCards.png", "img/atlas/dotCards.json");
             _this.load.atlas("numbertiles", "img/atlas/numberTiles.png", "img/atlas/numberTiles.json");
             _this.load.atlas("menu", "img/atlas/topBarAndButtons.png", "img/atlas/topBarAndButtons.json");
+            _this.load.atlas("slider", "img/atlas/Sliders.png", "img/atlas/Sliders.json");
             _this.load.audio("dropHit", "audio/sfx/dropHit.mp3", null, null);
             _this.load.audio("dropMiss", "audio/sfx/dropMiss.mp3", null, null);
             _this.load.audio("pickUp", "audio/sfx/pickUp.mp3", null, null);
@@ -315,6 +316,15 @@ var TestSpace = (function (_super) {
                 ["3", "+", "4", "=", "7"]
             ], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], ["pre_3", "plus", "post_4", "equals"], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
             task.render();
+            // let test=this.add.sprite(50, 50, "numbertiles", "1_tex.png")
+            // test.setOrigin(0.0)
+            // test.setPipeline("Light2D")
+            // let light  = this.lights.
+            // this.lights.enable().setAmbientColor(0x555555);
+            // this.input.on('pointermove', function (pointer) {
+            //     light.x = pointer.x;
+            //     light.y = pointer.y;
+            // });
         };
         return _this;
     }
@@ -727,6 +737,9 @@ var NarrationManager = (function () {
         };
         f();
     };
+    NarrationManager.prototype.addSound = function (soundKey) {
+        this.soundManager.soundKeys.push();
+    };
     return NarrationManager;
 }());
 exports.NarrationManager = NarrationManager;
@@ -798,7 +811,9 @@ exports.ScaleManager = ScaleManager;
 var manipulative_1 = require("./manipulative");
 var Slider = (function () {
     function Slider(aTargetScene, theSliderContents, theSliderType) {
-        this.y = 600;
+        this.y = 634;
+        this.isHidden = false;
+        this.sliderDuration = 350;
         this.targetScene = aTargetScene;
         this.sliderContents = [];
         this.contentSprites = [];
@@ -812,6 +827,9 @@ var Slider = (function () {
             case "barsnumbers":
                 break;
             case "cardsnumbers":
+                this.sliderAsset = this.targetScene.add.sprite(512, this.y + 20, "slider", "CardsNumbersSlider.png");
+                this.sliderAsset.setInteractive();
+                this.contentSprites.push(this.sliderAsset);
                 this.sliderContents.push([]);
                 this.sliderContents.push([]);
                 for (var i = 0; i < theSliderContents.length; i++) {
@@ -828,6 +846,7 @@ var Slider = (function () {
         }
     }
     Slider.prototype.render = function () {
+        var _this = this;
         console.log(this.sliderContents);
         var xOffset = 0;
         var yOffset = this.y;
@@ -835,8 +854,17 @@ var Slider = (function () {
             for (var j = 0; j < this.sliderContents[i].length; j++) {
                 this.sliderContents[i][j].render(92 * (j + 1) + xOffset, yOffset);
             }
-            yOffset += 125;
+            yOffset += 100;
         }
+        this.sliderAsset.on("pointerup", function () {
+            if (_this.isHidden) {
+                _this.show();
+            }
+            else {
+                _this.hide();
+            }
+            _this.isHidden = !_this.isHidden;
+        });
     };
     Slider.prototype.setDropZones = function (dropZones) {
         for (var i = 0; i < this.sliderContents.length; i++) {
@@ -846,20 +874,36 @@ var Slider = (function () {
         }
     };
     Slider.prototype.hide = function () {
-        this.targetScene.add.tween({
-            targets: this.contentSprites,
-            y: this.y + 300,
-            ease: "linear",
-            duration: 1000
-        });
+        for (var i = 0; i < this.contentSprites.length; i++) {
+            this.targetScene.add.tween({
+                targets: this.contentSprites[i],
+                y: this.contentSprites[i].y + 200,
+                ease: "linear",
+                duration: this.sliderDuration
+            });
+        }
+        // this.targetScene.add.tween({
+        //     targets:this.contentSprites,
+        //     y:this.y+200,
+        //     ease:"linear",
+        //     duration:500
+        // })
     };
     Slider.prototype.show = function () {
-        this.targetScene.add.tween({
-            targets: this.contentSprites,
-            y: this.y,
-            ease: "linear",
-            duration: 1000
-        });
+        for (var i = 0; i < this.contentSprites.length; i++) {
+            this.targetScene.add.tween({
+                targets: this.contentSprites[i],
+                y: this.contentSprites[i].y - 200,
+                ease: "linear",
+                duration: this.sliderDuration
+            });
+        }
+        // this.targetScene.add.tween({
+        //     targets:this.contentSprites,
+        //     y:this.y+20,
+        //     ease:"linear",
+        //     duration:500
+        // })
     };
     return Slider;
 }());
