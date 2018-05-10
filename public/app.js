@@ -245,9 +245,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var numbertile_1 = require("../utils/manipulative/numbertile");
 var background_1 = require("../utils/background");
-var button_1 = require("../utils/button");
 var task_1 = require("../utils/task/task");
 var TestSpace = (function (_super) {
     __extends(TestSpace, _super);
@@ -317,10 +315,6 @@ var TestSpace = (function (_super) {
                 ["3", "+", "4", "=", "7"]
             ], ["matchCards"], [{ "cards": [0, 2, 4] }, { "numbers": [4] }], ["pre_3", "plus", "post_4", "equals"], ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], "cardsnumbers", false, "3", null, "", "", [""], 0, "all", "0", { "cardsnumbers": "3_1" }, "none", "h");
             task.render();
-            new numbertile_1.NumberTile(_this, 2, task.dropZones).render(750, 750);
-            new button_1.Button(500, 450, _this.add.sprite(0, 0, "menu", "CheckBtn.png"), _this, function () {
-                console.log("CLICKED!");
-            }).render();
         };
         return _this;
     }
@@ -341,40 +335,6 @@ var Background = (function () {
 }());
 exports.Background = Background;
 //# sourceMappingURL=background.js.map
-});
-
-;require.register("utils/button.ts", function(exports, require, module) {
-"use strict";
-var Button = (function () {
-    function Button(anX, aY, aResource, aTargetScene, clickCallback) {
-        this.x = anX;
-        this.y = aY;
-        this.resource = aResource;
-        this.targetScene = aTargetScene;
-        this.onClick = clickCallback;
-        this.resource.visible = false;
-    }
-    ;
-    Button.prototype.render = function () {
-        var _this = this;
-        this.resource.visible = true;
-        this.resource.x = this.x;
-        this.resource.y = this.y;
-        this.resource.setInteractive();
-        this.resource.on("pointerover", function () {
-            _this.resource.setTint(0xBEBEBE);
-        });
-        this.resource.on("pointerout", function () {
-            _this.resource.clearTint();
-        });
-        this.resource.on("pointerup", function () {
-            _this.onClick();
-        });
-    };
-    return Button;
-}());
-exports.Button = Button;
-//# sourceMappingURL=button.js.map
 });
 
 ;require.register("utils/dropzone.ts", function(exports, require, module) {
@@ -471,6 +431,7 @@ var DotCard = (function (_super) {
         var _this = this;
         var frame = aValue.toString();
         var dotCard = theTargetScene.add.sprite(0, 0, "dotcards", frame);
+        dotCard.setScale(0.5);
         _this = _super.call(this, theTargetScene, aValue, manipulatives_1.ManipulativeType.DOTCARD, dotCard, someDragPoints) || this;
         return _this;
     }
@@ -520,12 +481,13 @@ var Manipulative = (function () {
         this.dragPoints = someDragPoints;
         this.dragSprite = aSprite;
         //dotcards too big hotfix
-        if (this.type == ManipulativeType.DOTCARD) {
-            this.originalScale = 0.5;
-        }
-        else {
-            this.originalScale = this.dragSprite.scaleX;
-        }
+        // if(this.type == ManipulativeType.DOTCARD){
+        //     this.originalScale=0.5;
+        // }
+        // else{
+        //     this.originalScale=this.dragSprite.scaleX;            
+        // }
+        this.originalScale = this.dragSprite.scaleX;
         this.dragSprite.visible = false;
         this.soundManager = new soundmanager_1.SoundManager(this.targetScene, [
             "dropHit",
@@ -560,10 +522,19 @@ var Manipulative = (function () {
             }
         });
     };
+    Manipulative.prototype.toggleActive = function (isActive, targetSprite) {
+        if (isActive) {
+            targetSprite.setScale(this.originalScale * 1.25);
+        }
+        else {
+            targetSprite.setScale(this.originalScale);
+        }
+    };
     Manipulative.prototype.startDrag = function () {
         if (!this.isDragging) {
             this.soundManager.play("pickUp");
-            this.dragSprite.setScale(this.originalScale * 1.25);
+            // this.dragSprite.setScale(this.originalScale*1.25);
+            this.toggleActive(true, this.dragSprite);
             this.dragSprite.setDepth(100);
             this.isDragging = true;
             this.targetScene.input.mouse.requestPointerLock();
@@ -603,7 +574,8 @@ var Manipulative = (function () {
             this.dragSprite.x = originX;
             this.dragSprite.y = originY;
         }
-        this.dragSprite.setScale(this.originalScale);
+        // this.dragSprite.setScale(this.originalScale);
+        this.toggleActive(false, this.dragSprite);
         this.dragSprite.setDepth(0);
         this.targetScene.input.mouse.releasePointerLock();
         console.log('drop');
@@ -619,6 +591,17 @@ var Manipulative = (function () {
     };
     Manipulative.prototype.setInteractive = function (interactiveBool) {
         this.isInteractive = interactiveBool;
+    };
+    Manipulative.prototype.pulse = function () {
+        this.targetScene.add.tween({
+            targets: this.dragSprite,
+            scaleX: 1.25,
+            scaleY: 1.25,
+            duration: 800,
+            yoyo: true,
+            ease: "Sine.EaseInOut",
+            step: 2
+        });
     };
     Manipulative.prototype.render = function (x, y, scale) {
         this.originalX = x;
@@ -691,10 +674,11 @@ exports.NumberTile = NumberTile;
 "use strict";
 var soundmanager_1 = require("./soundmanager");
 var NarrationManager = (function () {
-    function NarrationManager(aTargetScene, someSounds) {
+    function NarrationManager(aTargetScene, someSounds, someManipulatives) {
         this.sounds = someSounds;
         this.targetScene = aTargetScene;
         this.soundManager = new soundmanager_1.SoundManager(aTargetScene, someSounds);
+        this.manipulatives = someManipulatives;
         // this.soundManager=Main.soundManager;
     }
     NarrationManager.prototype.play = function (delay) {
@@ -703,6 +687,7 @@ var NarrationManager = (function () {
         var howManyTimes = this.sounds.length;
         var f = function () {
             _this.soundManager.play(_this.sounds[i]);
+            _this.manipulatives[i].pulse();
             i++;
             if (i < howManyTimes) {
                 setTimeout(f, delay);
@@ -776,6 +761,80 @@ exports.ScaleManager = ScaleManager;
 //# sourceMappingURL=scalemanager.js.map
 });
 
+;require.register("utils/slider.ts", function(exports, require, module) {
+"use strict";
+var manipulative_1 = require("./manipulative");
+var Slider = (function () {
+    function Slider(aTargetScene, theSliderContents, theSliderType) {
+        this.y = 600;
+        this.targetScene = aTargetScene;
+        this.sliderContents = [];
+        this.contentSprites = [];
+        switch (theSliderType) {
+            case "bars":
+                break;
+            case "cards":
+                break;
+            case "numbers":
+                break;
+            case "barsnumbers":
+                break;
+            case "cardsnumbers":
+                this.sliderContents.push([]);
+                this.sliderContents.push([]);
+                for (var i = 0; i < theSliderContents.length; i++) {
+                    var dotcard = new manipulative_1.DotCard(aTargetScene, parseInt(theSliderContents[i]), []);
+                    this.sliderContents[0].push(dotcard);
+                    this.contentSprites.push(dotcard.dragSprite);
+                }
+                for (var i = 0; i < theSliderContents.length; i++) {
+                    var numbertile = new manipulative_1.NumberTile(aTargetScene, parseInt(theSliderContents[i]), []);
+                    this.sliderContents[1].push(numbertile);
+                    this.contentSprites.push(numbertile.dragSprite);
+                }
+                break;
+        }
+    }
+    Slider.prototype.render = function () {
+        console.log(this.sliderContents);
+        var xOffset = 0;
+        var yOffset = this.y;
+        for (var i = 0; i < this.sliderContents.length; i++) {
+            for (var j = 0; j < this.sliderContents[i].length; j++) {
+                this.sliderContents[i][j].render(92 * (j + 1) + xOffset, yOffset);
+            }
+            yOffset += 125;
+        }
+    };
+    Slider.prototype.setDropZones = function (dropZones) {
+        for (var i = 0; i < this.sliderContents.length; i++) {
+            for (var j = 0; j < this.sliderContents[i].length; j++) {
+                this.sliderContents[i][j].dragPoints = dropZones;
+            }
+        }
+    };
+    Slider.prototype.hide = function () {
+        this.targetScene.add.tween({
+            targets: this.contentSprites,
+            y: this.y + 300,
+            ease: "linear",
+            duration: 1000
+        });
+    };
+    Slider.prototype.show = function () {
+        this.targetScene.add.tween({
+            targets: this.contentSprites,
+            y: this.y,
+            ease: "linear",
+            duration: 1000
+        });
+    };
+    return Slider;
+}());
+exports.Slider = Slider;
+//# sourceMappingURL=slider.js.map
+});
+
 ;require.register("utils/soundmanager.ts", function(exports, require, module) {
 "use strict";
 var SoundManager = (function () {
@@ -814,6 +873,7 @@ exports.SoundManager = SoundManager;
 var manipulative_1 = require("../manipulative");
 var dropzone_1 = require("../dropzone");
 var narrationmanager_1 = require("../narrationmanager");
+var slider_1 = require("../slider");
 var Task = (function () {
     function Task(aTargetScene, taskID, levelNum, subLevel, active, CCSSgrade, CCSSdomain, CCSSstandard, wayOfKnowing, subSkill, representation, diffLevel, taskType, taskArray, directionsArray, displayArray, audReqArray, sliderContents, sliderType, randomSlider, requiredSolutions, wp, wpBritish, wpSpanish, endPoints, steps, displayPoints, barType, notices, displayGrid, orient) {
         this.manipulativeArray = {
@@ -842,9 +902,8 @@ var Task = (function () {
         this.directionsArray = directionsArray;
         this.displayArray = displayArray;
         this.audReqArray = audReqArray;
-        this.narrationManager = new narrationmanager_1.NarrationManager(this.targetScene, audReqArray);
-        this.sliderContents = sliderContents;
-        this.sliderType = sliderType;
+        this.narrationManager = new narrationmanager_1.NarrationManager(this.targetScene, audReqArray, []);
+        this.slider = new slider_1.Slider(this.targetScene, sliderContents, sliderType);
         this.randomSlider = randomSlider;
         this.requiredSolutions = requiredSolutions;
         this.wp = wp;
@@ -871,6 +930,7 @@ var Task = (function () {
         }
     };
     Task.prototype.render = function () {
+        this.slider.render();
         var y = 300;
         //i will be the same as the row of the actual task when displaying. In the test case, row 0 will be cards, because displayArray[i] has the key "cards"
         for (var i = 0; i < this.taskArray.length; i++) {
@@ -891,13 +951,13 @@ var Task = (function () {
                         var dotCard = new manipulative_1.NumberTile(this.targetScene, this.taskArray[i][j], []);
                         dotCard.setInteractive(false);
                         this.manipulativeArray["cards"].push(dotCard);
-                        dotCard.render((75 * (j + 1)) + 250, (75 * (i + 1)) + 100);
+                        dotCard.render((80 * (j + 1)) + 250, (75 * (i + 1)) + 100);
                         break;
                     case "NUMBERTILE":
                         var numberTile = new manipulative_1.NumberTile(this.targetScene, this.taskArray[i][j], []);
                         numberTile.setInteractive(false);
                         this.manipulativeArray["numbers"].push(numberTile);
-                        numberTile.render((75 * (j + 1)) + 250, (100 * (i + 1)) + 100);
+                        numberTile.render((80 * (j + 1)) + 250, (100 * (i + 1)) + 100);
                         break;
                 }
             }
@@ -914,6 +974,8 @@ var Task = (function () {
                 }
             }
         }
+        this.narrationManager.manipulatives = this.manipulativeArray[Object.getOwnPropertyNames(this.manipulativeArray)[0]];
+        this.slider.setDropZones(this.dropZones);
         this.narrationManager.play(800);
     };
     return Task;

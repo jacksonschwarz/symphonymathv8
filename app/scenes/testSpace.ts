@@ -125,9 +125,6 @@ export class TestSpace extends Phaser.Scene{
         )
         task.render()
         
-        new NumberTile(this, 2, task.dropZones).render(750, 750);
-        new Button(500, 450, this.add.sprite(0, 0, "menu", "CheckBtn.png"), this, ()=>{
-            console.log("CLICKED!");
-        }).render()
+
     }
 }

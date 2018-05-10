@@ -2,6 +2,9 @@ import {Manipulative, DotCard, NumberTile} from "../manipulative"
 
 import {DropZone} from "../dropzone";
 import {NarrationManager} from "../narrationmanager";
+
+import {Slider} from "../slider";
+
 export class Task{
     targetScene:any;
     manipulativeArray={
@@ -27,8 +30,7 @@ export class Task{
     directionsArray:string[]
     displayArray:any[];
     audReqArray:string[];
-    sliderContents:string[];
-    sliderType:string;
+    slider:Slider;
     randomSlider:boolean;
     requiredSolutions:string;
     wp:string;
@@ -99,10 +101,10 @@ export class Task{
         this.displayArray=displayArray;
         this.audReqArray=audReqArray;
 
-        this.narrationManager=new NarrationManager(this.targetScene, audReqArray);
+        this.narrationManager=new NarrationManager(this.targetScene, audReqArray, []);
 
-        this.sliderContents=sliderContents;
-        this.sliderType=sliderType;
+        this.slider=new Slider(this.targetScene, sliderContents, sliderType)
+
         this.randomSlider=randomSlider;
         this.requiredSolutions=requiredSolutions;
         this.wp=wp;
@@ -131,7 +133,9 @@ export class Task{
 
 
     }
+    
     render(){
+        this.slider.render()
         let y=300;
         //i will be the same as the row of the actual task when displaying. In the test case, row 0 will be cards, because displayArray[i] has the key "cards"
         for(let i=0;i<this.taskArray.length;i++){
@@ -152,13 +156,13 @@ export class Task{
                         let dotCard=new NumberTile(this.targetScene, this.taskArray[i][j], [])
                         dotCard.setInteractive(false);
                         this.manipulativeArray["cards"].push(dotCard)
-                        dotCard.render((75*(j+1))+250, (75*(i+1))+100)
+                        dotCard.render((80*(j+1))+250, (75*(i+1))+100)
                         break;
                     case "NUMBERTILE":
                         let numberTile=new NumberTile(this.targetScene, this.taskArray[i][j], [])
                         numberTile.setInteractive(false);
                         this.manipulativeArray["numbers"].push(numberTile)
-                        numberTile.render((75*(j+1))+250, (100*(i+1))+100)
+                        numberTile.render((80*(j+1))+250, (100*(i+1))+100)
                         break;
                 }
 
@@ -176,6 +180,8 @@ export class Task{
                 }
             }
         }
+        this.narrationManager.manipulatives=this.manipulativeArray[Object.getOwnPropertyNames(this.manipulativeArray)[0]];
+        this.slider.setDropZones(this.dropZones);
         this.narrationManager.play(800)
     }
 }  

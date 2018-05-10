@@ -46,12 +46,13 @@ export class Manipulative{
         this.dragSprite=aSprite;
 
         //dotcards too big hotfix
-        if(this.type == ManipulativeType.DOTCARD){
-            this.originalScale=0.5;
-        }
-        else{
-            this.originalScale=this.dragSprite.scaleX;            
-        }
+        // if(this.type == ManipulativeType.DOTCARD){
+        //     this.originalScale=0.5;
+        // }
+        // else{
+        //     this.originalScale=this.dragSprite.scaleX;            
+        // }
+        this.originalScale=this.dragSprite.scaleX
 
         this.dragSprite.visible=false;
         
@@ -98,10 +99,19 @@ export class Manipulative{
             }
         })
     }
+    toggleActive(isActive:boolean, targetSprite:any){
+        if(isActive){
+            targetSprite.setScale(this.originalScale * 1.25)
+        }
+        else{
+            targetSprite.setScale(this.originalScale);
+        }
+    }
     private startDrag() {
         if(!this.isDragging){
             this.soundManager.play("pickUp");
-            this.dragSprite.setScale(this.originalScale*1.25);
+            // this.dragSprite.setScale(this.originalScale*1.25);
+            this.toggleActive(true, this.dragSprite)
             this.dragSprite.setDepth(100);
             this.isDragging=true;
             this.targetScene.input.mouse.requestPointerLock();
@@ -142,7 +152,8 @@ export class Manipulative{
             this.dragSprite.y=originY;
         }
 
-        this.dragSprite.setScale(this.originalScale);
+        // this.dragSprite.setScale(this.originalScale);
+        this.toggleActive(false, this.dragSprite);
         this.dragSprite.setDepth(0);
         this.targetScene.input.mouse.releasePointerLock();
         console.log('drop')
@@ -158,6 +169,17 @@ export class Manipulative{
     }
     setInteractive(interactiveBool:boolean){
         this.isInteractive=interactiveBool;
+    }
+    pulse(){
+        this.targetScene.add.tween({
+            targets:this.dragSprite,
+            scaleX:1.25,
+            scaleY:1.25,
+            duration:800,
+            yoyo:true,
+            ease:"Sine.EaseInOut",
+            step:2
+        })
     }
     render(x, y, scale?){
         this.originalX=x;

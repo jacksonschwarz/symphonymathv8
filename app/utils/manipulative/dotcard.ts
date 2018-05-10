@@ -12,6 +12,7 @@ export class DotCard extends Manipulative {
             pointerupCallback?:()=>void,){
             let frame=aValue.toString();
             let dotCard=theTargetScene.add.sprite(0, 0, "dotcards", frame)
+            dotCard.setScale(0.5);
             super(theTargetScene, aValue, ManipulativeType.DOTCARD, dotCard, someDragPoints);
     
         }
