@@ -6,6 +6,8 @@ export class Slider{
     sliderType:string;
     contentSprites:any[];
     sliderAsset:any;
+    dropZones:any;
+
     y=634;
     isHidden=false;
     sliderDuration=350;
@@ -32,16 +34,27 @@ export class Slider{
                     let dotcard=new DotCard(aTargetScene, parseInt(theSliderContents[i]), [])
                     this.sliderContents[0].push(dotcard)
                     this.contentSprites.push(dotcard.dragSprite);
+                    dotcard.dragSprite.once("pointerdown", ()=>{
+                        let newDotCard=new DotCard(aTargetScene, parseInt(theSliderContents[i]), this.dropZones)
+                        newDotCard.render(dotcard.dragSprite.x, dotcard.dragSprite.y);
+                        this.contentSprites.push(newDotCard.dragSprite)
+                    })
                 }
                 for(let i=0;i<theSliderContents.length;i++){
                     let numbertile=new NumberTile(aTargetScene, parseInt(theSliderContents[i]), [])
                     this.sliderContents[1].push(numbertile)
                     this.contentSprites.push(numbertile.dragSprite)
+                    numbertile.dragSprite.once("pointerdown", ()=>{
+                        let newNumberTile=new NumberTile(aTargetScene, parseInt(theSliderContents[i]), this.dropZones)
+                        newNumberTile.render(numbertile.dragSprite.x, numbertile.dragSprite.y);
+                        this.contentSprites.push(newNumberTile.dragSprite);
+                    })
                 }
                 break;
         
         }
     }
+
     render(){
         console.log(this.sliderContents)
         let xOffset=0
@@ -65,6 +78,7 @@ export class Slider{
         })
     }
     setDropZones(dropZones:DropZone[]){
+        this.dropZones=dropZones;
         for(let i=0;i<this.sliderContents.length;i++){
             for(let j=0;j<this.sliderContents[i].length;j++){
                 this.sliderContents[i][j].dragPoints=dropZones;

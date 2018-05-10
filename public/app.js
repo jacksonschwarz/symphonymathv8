@@ -811,6 +811,7 @@ exports.ScaleManager = ScaleManager;
 var manipulative_1 = require("./manipulative");
 var Slider = (function () {
     function Slider(aTargetScene, theSliderContents, theSliderType) {
+        var _this = this;
         this.y = 634;
         this.isHidden = false;
         this.sliderDuration = 350;
@@ -832,15 +833,33 @@ var Slider = (function () {
                 this.contentSprites.push(this.sliderAsset);
                 this.sliderContents.push([]);
                 this.sliderContents.push([]);
-                for (var i = 0; i < theSliderContents.length; i++) {
+                var _loop_1 = function (i) {
                     var dotcard = new manipulative_1.DotCard(aTargetScene, parseInt(theSliderContents[i]), []);
-                    this.sliderContents[0].push(dotcard);
-                    this.contentSprites.push(dotcard.dragSprite);
-                }
+                    this_1.sliderContents[0].push(dotcard);
+                    this_1.contentSprites.push(dotcard.dragSprite);
+                    dotcard.dragSprite.once("pointerdown", function () {
+                        var newDotCard = new manipulative_1.DotCard(aTargetScene, parseInt(theSliderContents[i]), _this.dropZones);
+                        newDotCard.render(dotcard.dragSprite.x, dotcard.dragSprite.y);
+                        _this.contentSprites.push(newDotCard.dragSprite);
+                    });
+                };
+                var this_1 = this;
                 for (var i = 0; i < theSliderContents.length; i++) {
+                    _loop_1(i);
+                }
+                var _loop_2 = function (i) {
                     var numbertile = new manipulative_1.NumberTile(aTargetScene, parseInt(theSliderContents[i]), []);
-                    this.sliderContents[1].push(numbertile);
-                    this.contentSprites.push(numbertile.dragSprite);
+                    this_2.sliderContents[1].push(numbertile);
+                    this_2.contentSprites.push(numbertile.dragSprite);
+                    numbertile.dragSprite.once("pointerdown", function () {
+                        var newNumberTile = new manipulative_1.NumberTile(aTargetScene, parseInt(theSliderContents[i]), _this.dropZones);
+                        newNumberTile.render(numbertile.dragSprite.x, numbertile.dragSprite.y);
+                        _this.contentSprites.push(newNumberTile.dragSprite);
+                    });
+                };
+                var this_2 = this;
+                for (var i = 0; i < theSliderContents.length; i++) {
+                    _loop_2(i);
                 }
                 break;
         }
@@ -867,6 +886,7 @@ var Slider = (function () {
         });
     };
     Slider.prototype.setDropZones = function (dropZones) {
+        this.dropZones = dropZones;
         for (var i = 0; i < this.sliderContents.length; i++) {
             for (var j = 0; j < this.sliderContents[i].length; j++) {
                 this.sliderContents[i][j].dragPoints = dropZones;
