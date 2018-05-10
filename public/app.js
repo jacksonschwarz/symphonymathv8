@@ -841,6 +841,7 @@ var Slider = (function () {
                         var newDotCard = new manipulative_1.DotCard(aTargetScene, parseInt(theSliderContents[i]), _this.dropZones);
                         newDotCard.render(dotcard.dragSprite.x, dotcard.dragSprite.y);
                         _this.contentSprites.push(newDotCard.dragSprite);
+                        _this.contentSprites.splice(_this.contentSprites.indexOf(dotcard.dragSprite), 1);
                     });
                 };
                 var this_1 = this;

@@ -38,6 +38,7 @@ export class Slider{
                         let newDotCard=new DotCard(aTargetScene, parseInt(theSliderContents[i]), this.dropZones)
                         newDotCard.render(dotcard.dragSprite.x, dotcard.dragSprite.y);
                         this.contentSprites.push(newDotCard.dragSprite)
+                        this.contentSprites.splice(this.contentSprites.indexOf(dotcard.dragSprite), 1)
                     })
                 }
                 for(let i=0;i<theSliderContents.length;i++){
