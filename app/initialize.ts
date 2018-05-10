@@ -13,7 +13,7 @@ const game = new Phaser.Game(<any>{ // <any> works around the missing GameConfig
       new ScaleManager(game, (!game.device.os.windows && !game.device.os.linux && !game.device.os.macOS))
     }
   },
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   parent: "content",
   // canvas: null,
   // canvasStyle: null,

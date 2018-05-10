@@ -121,7 +121,6 @@ export class Task{
     addDropZone(manipulativeType:string, manipulativeIndex:number, dropZone:DropZone){
 
         if(this.manipulativeArray[manipulativeType].length > 0){
-            console.log(this.manipulativeArray[manipulativeType][manipulativeIndex]);
             this.manipulativeArray[manipulativeType][manipulativeIndex].dragSprite.visible=false
             let x=this.manipulativeArray[manipulativeType][manipulativeIndex].originalX
             let y=this.manipulativeArray[manipulativeType][manipulativeIndex].originalY
@@ -133,7 +132,7 @@ export class Task{
 
 
     }
-    
+
     render(){
         this.slider.render()
         let y=300;

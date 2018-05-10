@@ -45,13 +45,6 @@ export class Manipulative{
         this.dragPoints=someDragPoints;
         this.dragSprite=aSprite;
 
-        //dotcards too big hotfix
-        // if(this.type == ManipulativeType.DOTCARD){
-        //     this.originalScale=0.5;
-        // }
-        // else{
-        //     this.originalScale=this.dragSprite.scaleX;            
-        // }
         this.originalScale=this.dragSprite.scaleX
 
         this.dragSprite.visible=false;
@@ -62,6 +55,7 @@ export class Manipulative{
             "dropMiss",
             "pickUp"
         ])
+        this.dragSprite.setDepth(1)
         
 
     }
@@ -154,7 +148,7 @@ export class Manipulative{
 
         // this.dragSprite.setScale(this.originalScale);
         this.toggleActive(false, this.dragSprite);
-        this.dragSprite.setDepth(0);
+        this.dragSprite.setDepth(1);
         this.targetScene.input.mouse.releasePointerLock();
         console.log('drop')
         this.isDragging=false;
@@ -170,18 +164,25 @@ export class Manipulative{
     setInteractive(interactiveBool:boolean){
         this.isInteractive=interactiveBool;
     }
+
     pulse(){
+        let graphics=this.targetScene.add.graphics(this.dragSprite.x, this.dragSprite.y)
+        graphics.alpha=0;
+        graphics.fillStyle(0xffffff);
+        graphics.fillRect(this.dragSprite.x-(this.dragSprite.width/2)-5, this.dragSprite.y-(this.dragSprite.height/2)-5, this.dragSprite.width+10, this.dragSprite.height+10)
+        graphics.setDepth(0)
         this.targetScene.add.tween({
-            targets:this.dragSprite,
-            scaleX:1.25,
-            scaleY:1.25,
+            targets:graphics,
+            alpha:0.5,
             // tint:0xffffff,
             duration:250,
             yoyo:true,
             ease:"Sine.EaseInOut",
         })
+
     }
     render(x, y, scale?){
+
         this.originalX=x;
         this.originalY=y;
         this.dragSprite.visible=true;

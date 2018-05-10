@@ -125,6 +125,5 @@ export class TestSpace extends Phaser.Scene{
         )
         task.render()
         
-
     }
 }

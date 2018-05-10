@@ -162,7 +162,7 @@ var game = new Phaser.Game({
             new scalemanager_1.ScaleManager(game, (!game.device.os.windows && !game.device.os.linux && !game.device.os.macOS));
         }
     },
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     parent: "content",
     // canvas: null,
     // canvasStyle: null,
@@ -514,13 +514,6 @@ var Manipulative = (function () {
         this.onPointerOut = pointeroutCallback;
         this.dragPoints = someDragPoints;
         this.dragSprite = aSprite;
-        //dotcards too big hotfix
-        // if(this.type == ManipulativeType.DOTCARD){
-        //     this.originalScale=0.5;
-        // }
-        // else{
-        //     this.originalScale=this.dragSprite.scaleX;            
-        // }
         this.originalScale = this.dragSprite.scaleX;
         this.dragSprite.visible = false;
         this.soundManager = new soundmanager_1.SoundManager(this.targetScene, [
@@ -528,6 +521,7 @@ var Manipulative = (function () {
             "dropMiss",
             "pickUp"
         ]);
+        this.dragSprite.setDepth(1);
     }
     Manipulative.prototype.clickAndFollow = function (dragSprite, originX, originY) {
         var _this = this;
@@ -610,7 +604,7 @@ var Manipulative = (function () {
         }
         // this.dragSprite.setScale(this.originalScale);
         this.toggleActive(false, this.dragSprite);
-        this.dragSprite.setDepth(0);
+        this.dragSprite.setDepth(1);
         this.targetScene.input.mouse.releasePointerLock();
         console.log('drop');
         this.isDragging = false;
@@ -627,10 +621,14 @@ var Manipulative = (function () {
         this.isInteractive = interactiveBool;
     };
     Manipulative.prototype.pulse = function () {
+        var graphics = this.targetScene.add.graphics(this.dragSprite.x, this.dragSprite.y);
+        graphics.alpha = 0;
+        graphics.fillStyle(0xffffff);
+        graphics.fillRect(this.dragSprite.x - (this.dragSprite.width / 2) - 5, this.dragSprite.y - (this.dragSprite.height / 2) - 5, this.dragSprite.width + 10, this.dragSprite.height + 10);
+        graphics.setDepth(0);
         this.targetScene.add.tween({
-            targets: this.dragSprite,
-            scaleX: 1.25,
-            scaleY: 1.25,
+            targets: graphics,
+            alpha: 0.5,
             // tint:0xffffff,
             duration: 250,
             yoyo: true,
@@ -953,7 +951,6 @@ var Task = (function () {
     }
     Task.prototype.addDropZone = function (manipulativeType, manipulativeIndex, dropZone) {
         if (this.manipulativeArray[manipulativeType].length > 0) {
-            console.log(this.manipulativeArray[manipulativeType][manipulativeIndex]);
             this.manipulativeArray[manipulativeType][manipulativeIndex].dragSprite.visible = false;
             var x = this.manipulativeArray[manipulativeType][manipulativeIndex].originalX;
             var y = this.manipulativeArray[manipulativeType][manipulativeIndex].originalY;
