@@ -337,6 +337,40 @@ exports.Background = Background;
 //# sourceMappingURL=background.js.map
 });
 
+;require.register("utils/button.ts", function(exports, require, module) {
+"use strict";
+var Button = (function () {
+    function Button(anX, aY, aResource, aTargetScene, clickCallback) {
+        this.x = anX;
+        this.y = aY;
+        this.resource = aResource;
+        this.targetScene = aTargetScene;
+        this.onClick = clickCallback;
+        this.resource.visible = false;
+    }
+    ;
+    Button.prototype.render = function () {
+        var _this = this;
+        this.resource.visible = true;
+        this.resource.x = this.x;
+        this.resource.y = this.y;
+        this.resource.setInteractive();
+        this.resource.on("pointerover", function () {
+            _this.resource.setTint(0xBEBEBE);
+        });
+        this.resource.on("pointerout", function () {
+            _this.resource.clearTint();
+        });
+        this.resource.on("pointerup", function () {
+            _this.onClick();
+        });
+    };
+    return Button;
+}());
+exports.Button = Button;
+//# sourceMappingURL=button.js.map
+});
+
 ;require.register("utils/dropzone.ts", function(exports, require, module) {
 "use strict";
 /**
@@ -597,10 +631,10 @@ var Manipulative = (function () {
             targets: this.dragSprite,
             scaleX: 1.25,
             scaleY: 1.25,
-            duration: 800,
+            // tint:0xffffff,
+            duration: 250,
             yoyo: true,
             ease: "Sine.EaseInOut",
-            step: 2
         });
     };
     Manipulative.prototype.render = function (x, y, scale) {

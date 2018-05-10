@@ -175,10 +175,10 @@ export class Manipulative{
             targets:this.dragSprite,
             scaleX:1.25,
             scaleY:1.25,
-            duration:800,
+            // tint:0xffffff,
+            duration:250,
             yoyo:true,
             ease:"Sine.EaseInOut",
-            step:2
         })
     }
     render(x, y, scale?){
