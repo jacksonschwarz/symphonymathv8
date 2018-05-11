@@ -104,41 +104,43 @@ export class Manipulative{
     private startDrag() {
         if(!this.isDragging){
             this.soundManager.play("pickUp");
-            // this.dragSprite.setScale(this.originalScale*1.25);
             this.toggleActive(true, this.dragSprite)
             this.dragSprite.setDepth(100);
+            this.removeFromZone();
             this.isDragging=true;
-            this.targetScene.input.mouse.requestPointerLock();
             this.startDragMS = Date.now(); 
         }               
     }
+    private removeFromZone(): void {
+        for(let i=0;i<this.dragPoints.length;i++){
+            if (this.dragPoints[i].manipulativeInZone==this) {
+                this.dragPoints[i].manipulativeInZone = undefined;
+            }
+        }
+    }
     private stopDrag(originX, originY) {
         let isInBounds=false;
+        //console.log(this.dragPoints);
         for(let i=0;i<this.dragPoints.length;i++){
             if(this.dragPoints[i].checkBounds(this.dragSprite.x, this.dragSprite.y, this)){
 
-                if(!this.dragPoints[i].manipulativeInZone){
-                    this.soundManager.play("dropHit");
-                    this.dragSprite.x=this.dragPoints[i].x;
-                    this.dragSprite.y=this.dragPoints[i].y;
-                    this.dragPoints[i].manipulativeInZone=this;
-                    isInBounds=true;;
-                }
-                else{
-                    console.log("found manipulative in spot, switching...")
-                    let man=this.dragPoints[i].manipulativeInZone
+                //console.log('manipulativeInZone for pt',i,'=>',this.dragPoints[i].manipulativeInZone);
+
+                if(this.dragPoints[i].manipulativeInZone){
+                    //console.log("found manipulative in spot, switching...")
+                    let man=this.dragPoints[i].manipulativeInZone;
                     man.dragSprite.x=man.originalX;
                     man.dragSprite.y=man.originalY;
-                    this.soundManager.play("dropHit");
-                    this.dragSprite.x=this.dragPoints[i].x;
-                    this.dragSprite.y=this.dragPoints[i].y;
-                    this.dragPoints[i].manipulativeInZone=this;
-                    isInBounds=true;
                 }
+
+                this.soundManager.play("dropHit");
+                isInBounds=true;
+                this.dragPoints[i].manipulativeInZone=this;
+                this.dragSprite.x=this.dragPoints[i].x;
+                this.dragSprite.y=this.dragPoints[i].y;
+
             }
-            else{
-                this.dragPoints[i].manipulativeInZone=undefined;
-            }
+ 
         }
         if(!isInBounds){
             this.soundManager.play("dropMiss");
@@ -149,8 +151,7 @@ export class Manipulative{
         // this.dragSprite.setScale(this.originalScale);
         this.toggleActive(false, this.dragSprite);
         this.dragSprite.setDepth(1);
-        this.targetScene.input.mouse.releasePointerLock();
-        console.log('drop')
+        // console.log('drop')
         this.isDragging=false;
     }
     private activateOnMouseOver(){

@@ -128,18 +128,5 @@ export class TestSpace extends Phaser.Scene{
         )
         task.render()
         
-        // let test=this.add.sprite(50, 50, "numbertiles", "1_tex.png")
-        // test.setOrigin(0.0)
-        // test.setPipeline("Light2D")
-        // let light  = this.lights.
-        
-        // this.lights.enable().setAmbientColor(0x555555);
-    
-        // this.input.on('pointermove', function (pointer) {
-    
-        //     light.x = pointer.x;
-        //     light.y = pointer.y;
-    
-        // });
     }
 }
