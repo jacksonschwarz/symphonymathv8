@@ -4,6 +4,7 @@ import {DropZone} from "../dropzone";
 import {NarrationManager} from "../narrationmanager";
 
 import {Slider} from "../slider";
+import {Button} from "../button";
 
 export class Task{
     targetScene:any;
@@ -133,8 +134,13 @@ export class Task{
 
     }
 
+    checkTask(): void {
+        console.log(this.narrationManager);
+        this.narrationManager.play(800);
+    }
+
     render(){
-        this.slider.render()
+        this.slider.render();
         let y=300;
         //i will be the same as the row of the actual task when displaying. In the test case, row 0 will be cards, because displayArray[i] has the key "cards"
         for(let i=0;i<this.taskArray.length;i++){
@@ -181,6 +187,10 @@ export class Task{
         }
         this.narrationManager.manipulatives=this.manipulativeArray[Object.getOwnPropertyNames(this.manipulativeArray)[0]];
         this.slider.setDropZones(this.dropZones);
-        this.narrationManager.play(800)
+
+        let checkBtn = new Button(0,0,this.targetScene.add.sprite(0,0,"menu","CheckBtn.png"),this,()=>{
+            this.checkTask();
+        }).render();
+        
     }
 }  
