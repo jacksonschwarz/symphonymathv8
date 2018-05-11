@@ -26,7 +26,7 @@ export class TestSpace extends Phaser.Scene{
         this.load.image("plains", "img/plain 2.jpg")
 
         this.load.atlas("dotcards", "img/atlas/dotCards.png", "img/atlas/dotCards.json")
-        this.load.atlas("numbertiles", "img/atlas/numberTiles.png", "img/atlas/numberTiles.json")
+        this.load.atlas("numbertiles", "img/atlas/numbertiles.png", "img/atlas/numbertiles.json")
         this.load.atlas("menu", "img/atlas/topBarAndButtons.png", "img/atlas/topBarAndButtons.json")
         this.load.atlas("slider", "img/atlas/Sliders.png", "img/atlas/Sliders.json")
 

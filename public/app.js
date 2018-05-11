@@ -259,7 +259,7 @@ var TestSpace = (function (_super) {
             _this.load.image("dropzone", "img/dropzone.png");
             _this.load.image("plains", "img/plain 2.jpg");
             _this.load.atlas("dotcards", "img/atlas/dotCards.png", "img/atlas/dotCards.json");
-            _this.load.atlas("numbertiles", "img/atlas/numberTiles.png", "img/atlas/numberTiles.json");
+            _this.load.atlas("numbertiles", "img/atlas/numbertiles.png", "img/atlas/numbertiles.json");
             _this.load.atlas("menu", "img/atlas/topBarAndButtons.png", "img/atlas/topBarAndButtons.json");
             _this.load.atlas("slider", "img/atlas/Sliders.png", "img/atlas/Sliders.json");
             _this.load.audio("dropHit", "audio/sfx/dropHit.mp3", null, null);
